@@ -29,7 +29,7 @@ public class LookPointMoveScript : MonoBehaviour {
             percentage = percentage * percentage * percentage * (percentage * (6f * percentage - 15f) + 10f);
 
             transform.position = Vector3.Lerp(startPos, endPos, percentage);
-            transform.rotation = Quaternion.Lerp(startRot, endRot, percentage);
+            //transform.rotation = Quaternion.Lerp(startRot, endRot, percentage);
 
             deltaTime += Time.deltaTime;
 
