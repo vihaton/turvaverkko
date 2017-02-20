@@ -8,6 +8,8 @@ public class CameraFollowScript : MonoBehaviour {
     public Transform target;
     // The distance in the x-z plane to the target
     public float distance = 10.0f;
+    //
+    public bool forceHeightFitToScreen;
     // the height we want the camera to be above the target
     public float height = 5.0f;
     // How much we 
@@ -17,6 +19,8 @@ public class CameraFollowScript : MonoBehaviour {
     public float staticYRotationOfCamera;
     public bool doesCameraRotate = false;
 
+    public GameObject safetyNetPlane;
+
     // Place the script in the Camera-Control group in the component menu
     [AddComponentMenu("Camera-Control/Smooth Follow")]
 
@@ -24,6 +28,12 @@ public class CameraFollowScript : MonoBehaviour {
     {
         // Early out if we don't have a target
         if (!target) return;
+
+        if (forceHeightFitToScreen)
+        {
+            //float planeColliderSize = safetyNetPlane.GetComponent<Collider>().bounds.size.magnitude;
+            height = safetyNetPlane.GetComponent<Collider>().bounds.size.magnitude;
+        }
 
         float wantedHeight, currentRotationAngle, currentHeight;
         wantedHeight = target.position.y + height;
