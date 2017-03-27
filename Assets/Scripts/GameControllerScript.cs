@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface SafetyNetInterface
-{
-    void dragEntry();
+public class GameControllerScript : MonoBehaviour {
 
+	void Start () {
+		
+	}
 }

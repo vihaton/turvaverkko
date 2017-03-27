@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -32,6 +33,7 @@ public class PawnHandlerScript : MonoBehaviour
         examining = false;
     }
 
+
     public void ShowPawnInformation(GameObject item)
     {
         examining = true;
@@ -49,6 +51,11 @@ public class PawnHandlerScript : MonoBehaviour
         InfoWindow.SetActive(true);
     }
 
+    public void DeletePawn()
+    {
+        Destroy(lastExaminedPawn);
+    }
+
     public void SetPrefabForInstantiation(GameObject prefab)
     {
         pawnPrefabPlaceholder = prefab;
@@ -58,5 +65,15 @@ public class PawnHandlerScript : MonoBehaviour
     {
         nameInput.text = "";
         descriptionInput.text = "";
+    }
+
+    internal Dictionary<int, SafetyNetEntryData> GetRuntimeData()
+    {
+        throw new NotImplementedException();
+    }
+
+    internal void DestroyAllProgress()
+    {
+        throw new NotImplementedException();
     }
 }
