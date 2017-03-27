@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class DragListenerScript : MonoBehaviour {
 
     public bool dragging = false;
+
     private float distance;
+    private Coroutine holdTimer;
 
     void OnMouseDown()
     {
