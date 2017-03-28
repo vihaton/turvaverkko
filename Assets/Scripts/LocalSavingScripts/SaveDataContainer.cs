@@ -8,7 +8,7 @@ public class SaveDataContainer
     [XmlElement("Timestamp")]
     public string timeStamp;
 
-    [XmlArray("EntryDataArray"), XmlArrayItem("EntryData")]
+    [XmlArray("EntryDataArray"), XmlArrayItem("Entry")]
     public SafetyNetEntryData[] SaveDataArray;
     
     public void Save(string path)
@@ -30,7 +30,7 @@ public class SaveDataContainer
         if (!File.Exists(path))
         {
             Save(path);
-            Debug.Log("SaveDataContainer: file not found, lets make new one");
+            Debug.Log(path + ": file not found, lets make new one");
         }
 
         using (var stream = new FileStream(path, FileMode.Open))

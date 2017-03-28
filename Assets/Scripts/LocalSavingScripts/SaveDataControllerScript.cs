@@ -21,7 +21,7 @@ public class SaveDataControllerScript : MonoBehaviour
     public void Save()
     {
         //Get runtime data from pawnhandler
-        Dictionary<int, SafetyNetEntryData> entryDataDict = PDH.GetRuntimeData();
+        List<PawnDataStruct> entryDataDict = PDH.GetRuntimeData();
         Debug.Log("SDCS, Save: runtime data count " + entryDataDict.Count);
 
         bool loadAndWrite = TryToLoadAndOverwrite(entryDataDict);
@@ -38,14 +38,14 @@ public class SaveDataControllerScript : MonoBehaviour
         }
     }
 
-    private bool TryToLoadAndOverwrite(Dictionary<int, SafetyNetEntryData> entryDataDict)
+    private bool TryToLoadAndOverwrite(List<PawnDataStruct> entryDataDict)
     {
-        SafetyNetEntryData[] temp = makeAnswerTable(entryDataDict);
+        SafetyNetEntryData[] temp = makeEntryDataArray(entryDataDict);
 
         try
         {
             saveDataContainer = saveDataContainer.Load(Application.persistentDataPath + "/SafetyNetData.xml");
-            saveDataContainer.SaveDataArray = new SafetyNetEntryData[entryDataDict.Keys.Count];
+            saveDataContainer.SaveDataArray = new SafetyNetEntryData[entryDataDict.Count];
             for (int i = 0; i < temp.Length; i++)
             {
                 saveDataContainer.SaveDataArray[i] = temp[i];
@@ -74,19 +74,29 @@ public class SaveDataControllerScript : MonoBehaviour
         }
     }
 
-    private SafetyNetEntryData[] makeAnswerTable(Dictionary<int, SafetyNetEntryData> entryDataDict)
+    private SafetyNetEntryData[] makeEntryDataArray(List<PawnDataStruct> entryData)
     {
-        SafetyNetEntryData[] sned = new SafetyNetEntryData[entryDataDict.Keys.Count];
-        int index = 0;
-        foreach (int keyID in entryDataDict.Keys)
+        SafetyNetEntryData[] sned = new SafetyNetEntryData[entryData.Count];
+        for (int index = 0; index < entryData.Count; index++)
         {
-            sned[index] = entryDataDict[keyID];
-            index++;
+            sned[index] = ConvertIntoSNED(entryData[index]);
         }
         return sned;
     }
 
-    internal SafetyNetEntryData[] loadAnswersDataFromStorage()
+    private SafetyNetEntryData ConvertIntoSNED(PawnDataStruct pawnDataStruct)
+    {
+        SafetyNetEntryData sned = new SafetyNetEntryData();
+
+        sned.entryName = pawnDataStruct.pawnName;
+        sned.entryDescription = pawnDataStruct.pawnDescription;
+        sned.entryType = pawnDataStruct.pawnType;
+        sned.entryPosition = pawnDataStruct.pawnPosition;
+
+        return sned;
+    }
+
+    internal SafetyNetEntryData[] loadEntryDataFromStorage()
     {
         return saveDataContainer.Load(Application.persistentDataPath + "/SafetyNetData.xml").SaveDataArray;
     }

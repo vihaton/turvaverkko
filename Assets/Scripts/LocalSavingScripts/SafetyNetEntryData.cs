@@ -7,16 +7,18 @@ using System.Xml.Serialization;
 public class SafetyNetEntryData
 {
 
-    [XmlElement("id")]
-    public int id { get; set; }
+    [XmlElement("name")]
+    public string entryName { get; set; }
+    [XmlElement("description")]
+    public string entryDescription { get; set; }
     [XmlElement("type")]
-    public int type { get; set; }
+    public int entryType { get; set; }
     [XmlElement("position")]
-    public Vector3 position { get; set; }
+    public Vector3 entryPosition { get; set; }
 
     public override int GetHashCode()
     {
-        return base.GetHashCode() + id.GetHashCode();
+        return base.GetHashCode() + entryName.GetHashCode();
     }
 
     public override bool Equals(object obj)
@@ -26,7 +28,7 @@ public class SafetyNetEntryData
             return false;
         }
         SafetyNetEntryData compared = (SafetyNetEntryData) obj;
-        if (id != compared.id)
+        if (entryName != compared.entryName || entryType != compared.entryType || entryPosition != compared.entryPosition)
             return false;
         return true;
     }
