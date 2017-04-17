@@ -9,6 +9,12 @@ public class DragListenerScript : MonoBehaviour {
 
     private float distance;
     private Coroutine holdTimer;
+    private PawnDataStruct pawnData;
+
+    private void Start()
+    {
+        pawnData = this.GetComponent<PawnDataStruct>();
+    }
 
     void OnMouseDown()
     {
@@ -17,6 +23,7 @@ public class DragListenerScript : MonoBehaviour {
 
     void OnMouseUp()
     {
+        pawnData.pawnPosition = this.transform.position;
         dragging = false;
     }
 
