@@ -6,10 +6,12 @@ using UnityEngine.UI;
 
 public class PawnHandlerScript : MonoBehaviour
 {
+    public GameObject origin;
     public GameObject spawnPoint;
     public GameObject InfoWindow;
     public InputField nameInput;
     public InputField descriptionInput;
+    public Slider slider;
     public GameObject[] typePrefabs;
 
     private List<PawnDataStruct> runtimeData;
@@ -26,7 +28,7 @@ public class PawnHandlerScript : MonoBehaviour
 
     internal void CreatePawnsFromStorage()
     {
-        SafetyNetEntryData[] entryData = SDCS.loadEntryDataFromStorage();
+        SafetyNetEntryData[] entryData = SDCS.LoadEntryDataFromStorage();
         for (int i = 0; i < entryData.Length; i++)
         {
             PawnDataStruct pawnData = ConvertEntryDataToPawnData(entryData[i]);
@@ -49,6 +51,7 @@ public class PawnHandlerScript : MonoBehaviour
         UpdateToRuntimeData(pawnData);
         pawnData.pawnName = nameInput.text;
         pawnData.pawnDescription = descriptionInput.text;
+        pawnData.pawnImportance = slider.value;
         examining = false;
     }
 
@@ -103,15 +106,22 @@ public class PawnHandlerScript : MonoBehaviour
 
         nameInput.text = pawnData.pawnName;
         descriptionInput.text = pawnData.pawnDescription;
+        slider.value = pawnData.pawnImportance;
         InfoWindow.SetActive(true);
     }
 
     public void DeletePawn()
     {
+        runtimeData.Remove(lastExaminedPawn.GetComponent<PawnDataStruct>());
         Destroy(lastExaminedPawn);
     }
 
-    public void SetPrefabForInstantiation(int i)
+    /*
+     * SetupPrefabForInstantiation is called when user creates new pawns to the net,
+     * in order to keep track of what kind of prefab is needed when instantiation
+     * occurs.
+     **/
+    public void SetupPrefabForInstantiation(int i)
     {
         if (i >= 0 && i < (typePrefabs.Length - 1))
         {
@@ -124,22 +134,42 @@ public class PawnHandlerScript : MonoBehaviour
 
     private PawnDataStruct ConvertEntryDataToPawnData(SafetyNetEntryData safetyNetEntryData)
     {
-        SetPrefabForInstantiation(safetyNetEntryData.entryType);
-        GameObject go = Instantiate(pawnPrefabPlaceholder, safetyNetEntryData.entryPosition, new Quaternion(90, 0, 0, 0));
+        GameObject go = MakeAGameObject(safetyNetEntryData);
+        PawnDataStruct pawnData = CopyPawnDataFromStorage(safetyNetEntryData, go);
+
+        return pawnData;
+    }
+
+    private static PawnDataStruct CopyPawnDataFromStorage(SafetyNetEntryData safetyNetEntryData, GameObject go)
+    {
         PawnDataStruct pawnData = go.GetComponent<PawnDataStruct>();
 
         pawnData.pawnName = safetyNetEntryData.entryName;
         pawnData.pawnDescription = safetyNetEntryData.entryDescription;
         pawnData.pawnType = safetyNetEntryData.entryType;
         pawnData.pawnPosition = safetyNetEntryData.entryPosition;
+        pawnData.pawnImportance = safetyNetEntryData.entryImportance;
 
         return pawnData;
+    }
+
+    private GameObject MakeAGameObject(SafetyNetEntryData safetyNetEntryData)
+    {
+        SetupPrefabForInstantiation(safetyNetEntryData.entryType);
+        GameObject go = Instantiate(pawnPrefabPlaceholder, safetyNetEntryData.entryPosition, new Quaternion(90, 0, 0, 0));
+        go.transform.SetParent(this.transform);
+        return go;
     }
 
     public void CancelUpdate()
     {
         nameInput.text = "";
         descriptionInput.text = "";
+    }
+
+    public GameObject GetOrigin()
+    {
+        return origin;
     }
 
     internal List<PawnDataStruct> GetRuntimeData()

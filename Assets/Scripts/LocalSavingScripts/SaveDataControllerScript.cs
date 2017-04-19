@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class SaveDataControllerScript : MonoBehaviour
 {
     public SaveDataContainer saveDataContainer = new SaveDataContainer();
-    public bool lastSaveSucccesful;
+    public bool lastSaveSuccessful;
     public DateTime lastSaved;
 
     private SafetyNetEntryData answerData = new SafetyNetEntryData();
@@ -29,18 +29,19 @@ public class SaveDataControllerScript : MonoBehaviour
 
         if (loadAndWrite && save)
         {
-            lastSaveSucccesful = true;
+            lastSaveSuccessful = true;
             lastSaved = DateTime.Now;
         }
         else
         {
-            lastSaveSucccesful = false;
+            lastSaveSuccessful = false;
+            Debug.Log("Saving failed!");
         }
     }
 
     private bool TryToLoadAndOverwrite(List<PawnDataStruct> entryDataDict)
     {
-        SafetyNetEntryData[] temp = makeEntryDataArray(entryDataDict);
+        SafetyNetEntryData[] temp = MakeEntryDataArray(entryDataDict);
 
         try
         {
@@ -74,7 +75,7 @@ public class SaveDataControllerScript : MonoBehaviour
         }
     }
 
-    private SafetyNetEntryData[] makeEntryDataArray(List<PawnDataStruct> entryData)
+    private SafetyNetEntryData[] MakeEntryDataArray(List<PawnDataStruct> entryData)
     {
         SafetyNetEntryData[] sned = new SafetyNetEntryData[entryData.Count];
         for (int index = 0; index < entryData.Count; index++)
@@ -92,11 +93,12 @@ public class SaveDataControllerScript : MonoBehaviour
         sned.entryDescription = pawnDataStruct.pawnDescription;
         sned.entryType = pawnDataStruct.pawnType;
         sned.entryPosition = pawnDataStruct.pawnPosition;
+        sned.entryImportance = pawnDataStruct.pawnImportance;
 
         return sned;
     }
 
-    internal SafetyNetEntryData[] loadEntryDataFromStorage()
+    internal SafetyNetEntryData[] LoadEntryDataFromStorage()
     {
         return saveDataContainer.Load(Application.persistentDataPath + "/SafetyNetData.xml").SaveDataArray;
     }

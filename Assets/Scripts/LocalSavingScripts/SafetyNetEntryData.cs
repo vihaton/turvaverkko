@@ -13,6 +13,8 @@ public class SafetyNetEntryData
     public string entryDescription { get; set; }
     [XmlElement("type")]
     public int entryType { get; set; }
+    [XmlElement("importance")]
+    public float entryImportance { get; set; }
     [XmlElement("position")]
     public Vector3 entryPosition { get; set; }
 

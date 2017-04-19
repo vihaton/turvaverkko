@@ -24,6 +24,8 @@ public class DragListenerScript : MonoBehaviour {
     void OnMouseUp()
     {
         pawnData.pawnPosition = this.transform.position;
+        pawnData.UpdateDistanceVectorFromOrigin();
+        pawnData.UpdateDistanceToOrigin();
         dragging = false;
     }
 
