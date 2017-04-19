@@ -35,7 +35,6 @@ public class SaveDataControllerScript : MonoBehaviour
         else
         {
             lastSaveSuccessful = false;
-            Debug.Log("Saving failed!");
         }
     }
 

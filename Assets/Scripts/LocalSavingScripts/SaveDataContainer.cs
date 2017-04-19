@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Xml.Serialization;
 using System.IO;
+using System;
 
 [XmlRoot("AnswerDataCollection")]
 public class SaveDataContainer
@@ -33,9 +34,34 @@ public class SaveDataContainer
             Debug.Log(path + ": file not found, lets make new one");
         }
 
+        SaveDataContainer SDC = null;
+
+        for (int i = 0; i < 3; i++)
+        {
+            SDC = ExtractSaveDataContainer(path, serializer);
+            if (SDC != null) {
+                return SDC;
+            } else
+            {
+                Save(path);
+            }
+        }
+
+        return SDC;
+    }
+
+    private static SaveDataContainer ExtractSaveDataContainer(string path, XmlSerializer serializer)
+    {
         using (var stream = new FileStream(path, FileMode.Open))
         {
-            return serializer.Deserialize(stream) as SaveDataContainer;
+            try
+            {
+                return serializer.Deserialize(stream) as SaveDataContainer;
+            } catch (Exception e)
+            {
+                Debug.Log("Could not retrieve SaveDataContainer, exception: " + e.ToString());
+                return null;
+            }
         }
     }
 

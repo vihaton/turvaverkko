@@ -29,6 +29,8 @@ public class PawnHandlerScript : MonoBehaviour
     internal void CreatePawnsFromStorage()
     {
         SafetyNetEntryData[] entryData = SDCS.LoadEntryDataFromStorage();
+        if (entryData == null)
+            return;
         for (int i = 0; i < entryData.Length; i++)
         {
             PawnDataStruct pawnData = ConvertEntryDataToPawnData(entryData[i]);
