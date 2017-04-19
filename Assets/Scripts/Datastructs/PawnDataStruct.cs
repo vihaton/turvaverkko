@@ -18,6 +18,8 @@ public class PawnDataStruct : MonoBehaviour {
     private void Start()
     {
         pawnPosition = this.transform.position;
+        UpdateDistanceToOrigin();
+        UpdateDistanceVectorFromOrigin();
     }
 
     private void Awake()

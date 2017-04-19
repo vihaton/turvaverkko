@@ -21,7 +21,6 @@ public class XYStatsControlScript : MonoBehaviour {
         foreach (PawnDataStruct pds in runtimeData)
         {
             WMG_Series series = seriesList[pds.pawnType];
-            Debug.Log("FUCKED IN XYSTATSCONTROLSCRIPT");
             series.pointValues.Add(new Vector2(pds.pawnImportance, pds.distanceToOrigin));
         }
     }

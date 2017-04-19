@@ -32,6 +32,10 @@ public class SafetyNetEntryData
         SafetyNetEntryData compared = (SafetyNetEntryData) obj;
         if (entryName != compared.entryName || entryType != compared.entryType || entryPosition != compared.entryPosition)
             return false;
+
+        if (!GetHashCode().Equals(compared.GetHashCode()))
+            return false;
+
         return true;
     }
 }

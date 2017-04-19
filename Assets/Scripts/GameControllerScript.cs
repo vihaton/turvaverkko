@@ -5,14 +5,14 @@ using UnityEngine;
 public class GameControllerScript : MonoBehaviour {
 
     private SaveDataControllerScript SDCS;
-    private PawnHandlerScript PDH;
+    private PawnHandlerScript PHS;
 
     private void Start()
     {
         SDCS = FindObjectOfType<SaveDataControllerScript>();
-        PDH = FindObjectOfType<PawnHandlerScript>();
+        PHS = FindObjectOfType<PawnHandlerScript>();
 
-        PDH.CreatePawnsFromStorage();
+        PHS.CreatePawnsFromStorage();
     }
 
     private void OnApplicationQuit()

@@ -7,19 +7,24 @@ public class ToggleStatsScreenScript : MonoBehaviour {
     public GameObject StatsScreenLookPoint;
     public GameObject SafetyNetLookPoint;
 
+    private LookPointMoveScript LPMS;
     private bool inStatsScreen = false;
 
-	public void StatsScreenToggle()
+    private void Start()
     {
-        GameObject temp = SafetyNetLookPoint;
+        LPMS = FindObjectOfType<LookPointMoveScript>();
+    }
+
+    public void StatsScreenToggle()
+    {
+        inStatsScreen = !inStatsScreen;
 
         if (!inStatsScreen)
         {
-            temp = StatsScreenLookPoint;
+            LPMS.Move(StatsScreenLookPoint);
+        } else
+        {
+            LPMS.Move(SafetyNetLookPoint);
         }
-
-        inStatsScreen = !inStatsScreen;
-
-        FindObjectOfType<LookPointMoveScript>().Move(temp);
     }
 }

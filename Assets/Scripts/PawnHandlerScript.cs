@@ -160,6 +160,7 @@ public class PawnHandlerScript : MonoBehaviour
         SetupPrefabForInstantiation(safetyNetEntryData.entryType);
         GameObject go = Instantiate(pawnPrefabPlaceholder, safetyNetEntryData.entryPosition, new Quaternion(90, 0, 0, 0));
         go.transform.SetParent(this.transform);
+
         return go;
     }
 
