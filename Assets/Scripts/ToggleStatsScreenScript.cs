@@ -5,10 +5,9 @@ using UnityEngine;
 public class ToggleStatsScreenScript : MonoBehaviour {
 
     public GameObject StatsScreenLookPoint;
-    public GameObject SafetyNetLookPoint;
 
     private LookPointMoveScript LPMS;
-    private bool inStatsScreen = false;
+    public bool inStatsScreen = false;
 
     private void Start()
     {
@@ -17,14 +16,14 @@ public class ToggleStatsScreenScript : MonoBehaviour {
 
     public void StatsScreenToggle()
     {
-        inStatsScreen = !inStatsScreen;
-
         if (!inStatsScreen)
         {
-            LPMS.Move(StatsScreenLookPoint);
+            LPMS.MoveTo(StatsScreenLookPoint);
         } else
         {
-            LPMS.Move(SafetyNetLookPoint);
+            LPMS.MoveBackToPreviousPoint();
         }
+
+        inStatsScreen = !inStatsScreen;
     }
 }

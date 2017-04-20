@@ -12,6 +12,7 @@ public class GameControllerScript : MonoBehaviour {
         SDCS = FindObjectOfType<SaveDataControllerScript>();
         PHS = FindObjectOfType<PawnHandlerScript>();
 
+        //Must be replaced with safetyNetAdminScript.createPawnsFromStorage();
         PHS.CreatePawnsFromStorage();
     }
 

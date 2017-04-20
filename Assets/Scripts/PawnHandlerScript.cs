@@ -15,8 +15,9 @@ public class PawnHandlerScript : MonoBehaviour
     public GameObject[] typePrefabs;
 
     private List<PawnDataStruct> runtimeData;
-    private GameObject pawnPrefabPlaceholder;
     private SaveDataControllerScript SDCS;
+    private SafetyNetAdminScript SNAS;
+    private GameObject pawnPrefabPlaceholder;
     private GameObject lastExaminedPawn;
     private bool examining;
 
@@ -24,6 +25,7 @@ public class PawnHandlerScript : MonoBehaviour
     {
         runtimeData = new List<PawnDataStruct>();
         SDCS = FindObjectOfType<SaveDataControllerScript>();
+        SNAS = FindObjectOfType<SafetyNetAdminScript>();
     }
 
     internal void CreatePawnsFromStorage()
@@ -38,7 +40,7 @@ public class PawnHandlerScript : MonoBehaviour
         }
     }
 
-    public void UpdatePawn()
+    public void UpdatePawn(GameObject pawnPrefab)
     {
         PawnDataStruct pawnData = null;
 
@@ -47,7 +49,7 @@ public class PawnHandlerScript : MonoBehaviour
             pawnData = lastExaminedPawn.GetComponent<PawnDataStruct>();
         } else
         {
-            pawnData = CreatePawnData();
+            pawnData = CreatePawn(pawnPrefab);
         }
 
         UpdateToRuntimeData(pawnData);
@@ -57,11 +59,11 @@ public class PawnHandlerScript : MonoBehaviour
         examining = false;
     }
 
-    private PawnDataStruct CreatePawnData()
+    private PawnDataStruct CreatePawn(GameObject pawnPrefab)
     {
-        GameObject pawn = Instantiate(pawnPrefabPlaceholder, spawnPoint.transform.position, new Quaternion(90, 0, 0, 0));
+        GameObject pawn = Instantiate(pawnPrefab, spawnPoint.transform.position, new Quaternion(90, 0, 0, 0));
         PawnDataStruct pawnData = pawn.GetComponent<PawnDataStruct>();
-        SetPawnType(pawnPrefabPlaceholder, pawnData);
+        SetPawnType(pawnPrefab, pawnData);
 
         return pawnData;
     }
@@ -118,22 +120,6 @@ public class PawnHandlerScript : MonoBehaviour
         Destroy(lastExaminedPawn);
     }
 
-    /*
-     * SetupPrefabForInstantiation is called when user creates new pawns to the net,
-     * in order to keep track of what kind of prefab is needed when instantiation
-     * occurs.
-     **/
-    public void SetupPrefabForInstantiation(int i)
-    {
-        if (i >= 0 && i < (typePrefabs.Length - 1))
-        {
-            pawnPrefabPlaceholder = typePrefabs[i];
-        } else
-        {
-            pawnPrefabPlaceholder = typePrefabs[typePrefabs.Length - 1];
-        }
-    }
-
     private PawnDataStruct ConvertEntryDataToPawnData(SafetyNetEntryData safetyNetEntryData)
     {
         GameObject go = MakeAGameObject(safetyNetEntryData);
@@ -157,8 +143,8 @@ public class PawnHandlerScript : MonoBehaviour
 
     private GameObject MakeAGameObject(SafetyNetEntryData safetyNetEntryData)
     {
-        SetupPrefabForInstantiation(safetyNetEntryData.entryType);
-        GameObject go = Instantiate(pawnPrefabPlaceholder, safetyNetEntryData.entryPosition, new Quaternion(90, 0, 0, 0));
+        GameObject prefab = SNAS.GetTypePrefab(safetyNetEntryData.entryType);
+        GameObject go = Instantiate(prefab, safetyNetEntryData.entryPosition, new Quaternion(90, 0, 0, 0));
         go.transform.SetParent(this.transform);
 
         return go;
