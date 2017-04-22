@@ -1,8 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SwipeDetectionScript : MonoBehaviour {
+
+    public GameObject testButton;
+    public Text testButtonText;
 
     private float fingerStartTime = 0.0f;
     private Vector2 fingerStartPos = Vector2.zero;
@@ -59,10 +63,14 @@ public class SwipeDetectionScript : MonoBehaviour {
                                 if (swipeType.x > 0.0f)
                                 {
                                     // MOVE RIGHT
+                                    testButtonText.text = "Swiped right!";
+                                    testButton.SetActive(true);
                                 }
                                 else
                                 {
                                     // MOVE LEFT
+                                    testButtonText.text = "Swiped left!";
+                                    testButton.SetActive(true);
                                 }
                             }
 
@@ -71,10 +79,14 @@ public class SwipeDetectionScript : MonoBehaviour {
                                 if (swipeType.y > 0.0f)
                                 {
                                     // MOVE UP
+                                    testButtonText.text = "Swiped up!";
+                                    testButton.SetActive(true);
                                 }
                                 else
                                 {
                                     // MOVE DOWN
+                                    testButtonText.text = "Swiped down!";
+                                    testButton.SetActive(true);
                                 }
                             }
 

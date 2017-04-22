@@ -118,6 +118,7 @@ public class PawnHandlerScript : MonoBehaviour
     {
         runtimeData.Remove(lastExaminedPawn.GetComponent<PawnDataStruct>());
         Destroy(lastExaminedPawn);
+        examining = false;
     }
 
     private PawnDataStruct ConvertEntryDataToPawnData(SafetyNetEntryData safetyNetEntryData)
@@ -154,6 +155,7 @@ public class PawnHandlerScript : MonoBehaviour
     {
         nameInput.text = "";
         descriptionInput.text = "";
+        examining = false;
     }
 
     public GameObject GetOrigin()
