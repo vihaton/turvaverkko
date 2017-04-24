@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PawnDataStruct : MonoBehaviour {
+public class PawnDataStruct : MonoBehaviour, ClickableInterface {
 
     public string pawnName;
     public string pawnDescription;
@@ -64,5 +65,17 @@ public class PawnDataStruct : MonoBehaviour {
     public float GetDistanceToOrigin()
     {
         return distanceToOrigin;
+    }
+
+    public void Clicked()
+    {
+        PHS.ShowPawnInformation(this.gameObject);
+    }
+
+    public void Held()
+    {
+        DragListenerScript dls = GetComponent<DragListenerScript>();
+        if (dls != null)
+            dls.EnableDrag();
     }
 }

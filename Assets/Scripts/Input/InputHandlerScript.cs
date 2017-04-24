@@ -56,22 +56,28 @@ public class InputHandlerScript : MonoBehaviour {
             //Debug.Log("Last item held, " + lastItem);
 
             GetObjectPointed();
-            ActivateDragging();
+            TryToInteract(true);
         }
         else if (delta < holdingTime)
         {
             //Debug.Log("Last item clicked, " + lastItem);
             if (lastItemPointed != null)
-                FindObjectOfType<PawnHandlerScript>().ShowPawnInformation(lastItemPointed);
+                TryToInteract(false);
         }
         t = 0;
     }
 
-    private void ActivateDragging()
+    private void TryToInteract(bool isHold)
     {
-        if (lastItemPointed != null)
+        ClickableInterface clickable = lastItemPointed.GetComponent<ClickableInterface>();
+        if (clickable == null)
+            return;
+        if (isHold)
         {
-            lastItemPointed.GetComponent<DragListenerScript>().EnableDrag();
+            clickable.Held();
+        } else
+        {
+            clickable.Clicked();
         }
     }
 
@@ -81,9 +87,10 @@ public class InputHandlerScript : MonoBehaviour {
         RaycastHit hit = new RaycastHit();
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out hit, 100.0f) && hit.transform.gameObject.tag.Contains("SafetyNetEntry"))
+        if (Physics.Raycast(ray, out hit, 100.0f) && hit.transform.gameObject)
         {
             lastItemPointed = hit.transform.gameObject;
+            Debug.Log("Last item hit: " + lastItemPointed.name);
         }
     }
 

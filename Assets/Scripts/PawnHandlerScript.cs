@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PawnHandlerScript : MonoBehaviour
-{
+public class PawnHandlerScript : MonoBehaviour {
+
     public GameObject origin;
     public GameObject spawnPoint;
     public GameObject InfoWindow;
@@ -101,11 +101,13 @@ public class PawnHandlerScript : MonoBehaviour
         examining = true;
         lastExaminedPawn = item;
         PawnDataStruct pawnData = item.GetComponent<PawnDataStruct>();
+        /*
         if (pawnData == null)
         {
             Debug.Log("Item data is empty, gameobject: " + gameObject);
             return;
         }
+        */
         Debug.Log("Item name " + pawnData.name + ", item description " + pawnData.pawnDescription);
 
         nameInput.text = pawnData.pawnName;
