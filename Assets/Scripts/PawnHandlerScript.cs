@@ -17,7 +17,7 @@ public class PawnHandlerScript : MonoBehaviour {
     private GameObject lastExaminedPawn;
     private bool examining;
 
-    private void Start()
+    private void Awake()
     {
         runtimeData = new List<PawnDataStruct>();
         SDCS = FindObjectOfType<SaveDataControllerScript>();
@@ -44,7 +44,7 @@ public class PawnHandlerScript : MonoBehaviour {
             pawnData = lastExaminedPawn.GetComponent<PawnDataStruct>();
         } else
         {
-            pawnData = CreatePawn(pawnPrefab);
+            pawnData = CreatePawn(pawnPrefab, SNAS.currentSafetyNet);
         }
 
         UpdateToRuntimeData(pawnData);
@@ -54,9 +54,10 @@ public class PawnHandlerScript : MonoBehaviour {
         examining = false;
     }
 
-    private PawnDataStruct CreatePawn(GameObject pawnPrefab)
+    private PawnDataStruct CreatePawn(GameObject pawnPrefab, GameObject parent)
     {
-        GameObject pawn = Instantiate(pawnPrefab, spawnPoint.transform.position, new Quaternion(90, 0, 0, 0));
+        GameObject pawn = Instantiate(pawnPrefab, spawnPoint.transform.position, new Quaternion(0, 0, 0, 0));
+        pawn.transform.SetParent(parent.transform);
         PawnDataStruct pawnData = pawn.GetComponent<PawnDataStruct>();
         SetPawnType(pawnPrefab, pawnData);
 
@@ -139,15 +140,15 @@ public class PawnHandlerScript : MonoBehaviour {
     private GameObject MakeAGameObject(SafetyNetEntryData safetyNetEntryData)
     {
         GameObject prefab = SNAS.GetTypePrefab(safetyNetEntryData.entryType);
-        GameObject go = Instantiate(prefab, safetyNetEntryData.entryPosition, new Quaternion(90, 0, 0, 0));
-        go.transform.SetParent(this.transform);
+        GameObject go = Instantiate(prefab, SNAS.gameObject.transform);
+        go.transform.position = safetyNetEntryData.entryPosition;
 
         return go;
     }
 
     public void CancelUpdate()
     {
-        SNAS.ResetNameAndInputField();
+        SNAS.ResetInputFields();
         examining = false;
     }
 

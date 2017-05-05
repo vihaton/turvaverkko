@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class SafetyNetAdminScript : MonoBehaviour {
 
     public GameObject currentSafetyNet;
-    public List<GameObject> safetyNets;
     public GameObject safetyNetPrefab;
     public float waitForTransition;
     public GameObject[] typePrefabs;
@@ -19,14 +18,13 @@ public class SafetyNetAdminScript : MonoBehaviour {
 
     private SaveDataControllerScript SDCS;
     private LookPointMoveScript LPMS;
-    private List<SafetyNetDataStruct> runtimeData;
+    private List<SafetyNetDataStruct> runtimeData = new List<SafetyNetDataStruct>();
     private GameObject pawnPrefabPlaceholder;
 
     private void Start()
     {
         SDCS = FindObjectOfType<SaveDataControllerScript>();
         LPMS = FindObjectOfType<LookPointMoveScript>();
-        safetyNets = new List<GameObject>();
         FindAndSortPrefabs();
     }
 
@@ -38,7 +36,6 @@ public class SafetyNetAdminScript : MonoBehaviour {
         foreach (GameObject go in prefabs)
         {
             PawnDataStruct pds = go.GetComponent<PawnDataStruct>();
-            //Debug.Log("Putting gameobject " + go + " in index " + pds.pawnType);
             typePrefabs[pds.pawnType] = go;
         }
     }
@@ -47,8 +44,9 @@ public class SafetyNetAdminScript : MonoBehaviour {
     {
         Debug.Log("Creating new safety net!");
         GameObject newSafetyNet = MakeASafetyNet();
+        InitializeSafetyNetData(newSafetyNet);
         currentSafetyNet = newSafetyNet;
-
+        
         StartCoroutine(WaitAndMoveTo(newSafetyNet));
     }
 
@@ -67,32 +65,45 @@ public class SafetyNetAdminScript : MonoBehaviour {
         return slider.value;
     }
 
-    internal void CreatePawnsFromStorage()
+    public void CreatePawnsFromStorage()
     {
+        GameObject defaultNet = null;
         SafetyNetData[] safetyNets = SDCS.LoadEntryDataFromStorage();
+        if (safetyNets == null || safetyNets.Length < 1)
+            return;
+
         foreach (SafetyNetData net in safetyNets)
         {
             GameObject netGameObject = MakeASafetyNet();
-            SafetyNetDataStruct SNDS = MakeSafetyNetDataStruct(net, netGameObject);
-            SNDS.PHS.CreatePawnsFromStorage(net.SafetyNetArray);
+            SafetyNetDataStruct SNDS = InitializeSafetyNetData(net, netGameObject);
+            SNDS.CreatePawnsFromStorage(net.SafetyNetArray);
+
+            if (net.id == 0)
+                defaultNet = netGameObject;
         }
+        currentSafetyNet = defaultNet;
+        StartCoroutine(WaitAndMoveTo(defaultNet));
     }
 
-    private SafetyNetDataStruct MakeSafetyNetDataStruct(SafetyNetData net, GameObject netGameObject)
+    private SafetyNetDataStruct InitializeSafetyNetData(SafetyNetData net, GameObject netGameObject)
     {
-        SafetyNetDataStruct SNDS = new SafetyNetDataStruct();
+        SafetyNetDataStruct SNDS = netGameObject.GetComponent<SafetyNetDataStruct>();
         runtimeData.Add(SNDS);
-        SNDS.PHS = netGameObject.GetComponent<PawnHandlerScript>();
         SNDS.SetId(net.id);
 
         return SNDS;
     }
 
+    private void InitializeSafetyNetData(GameObject netGameObject)
+    {
+        SafetyNetDataStruct SNDS = netGameObject.GetComponent<SafetyNetDataStruct>();
+        runtimeData.Add(SNDS);
+    }
+
     private GameObject MakeASafetyNet()
     {
         GameObject instantiated = Instantiate(safetyNetPrefab, gameObject.transform, false);
-        safetyNets.Add(instantiated);
-        instantiated.transform.SetAsFirstSibling();
+        instantiated.transform.SetAsLastSibling();
         instantiated.GetComponent<SafetyNetDataStruct>().SetId(GenerateId());
 
         return instantiated;
@@ -101,7 +112,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
     //So far only generic counter, nothing fancier
     private int GenerateId()
     {
-        return safetyNets.Count - 1;
+        return runtimeData.Count - 1;
     }
 
     private IEnumerator WaitAndMoveTo(GameObject newSafetyNet)
@@ -124,7 +135,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
      **/
     private void SetupPrefabForInstantiation(int i)
     {
-        ResetNameAndInputField();
+        ResetInputFields();
         if (i >= 0 && i < (typePrefabs.Length - 1))
         {
             pawnPrefabPlaceholder = typePrefabs[i];
@@ -161,10 +172,11 @@ public class SafetyNetAdminScript : MonoBehaviour {
         infoWindow.SetActive(true);
     }
 
-    internal void ResetNameAndInputField()
+    internal void ResetInputFields()
     {
         nameInput.text = "";
         descriptionInput.text = "";
+        slider.value = 0;
     }
 
     public List<SafetyNetDataStruct> GetRuntimeData()

@@ -4,11 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SafetyNetDataStruct : MonoBehaviour, ClickableInterface {
-
-    public PawnHandlerScript PHS;
-
+    
     [SerializeField]
     private int id;
+    private PawnHandlerScript PHS;
+
+    private void Awake()
+    {
+        PHS = GetComponentInChildren<PawnHandlerScript>();
+    }
 
     public void Clicked()
     {
@@ -28,5 +32,15 @@ public class SafetyNetDataStruct : MonoBehaviour, ClickableInterface {
     public int GetId()
     {
         return this.id;
+    }
+
+    internal void CreatePawnsFromStorage(SafetyNetEntryData[] safetyNetArray)
+    {
+        PHS.CreatePawnsFromStorage(safetyNetArray);
+    }
+
+    internal List<PawnDataStruct> GetRuntimeData()
+    {
+        return PHS.GetRuntimeData();
     }
 }

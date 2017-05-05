@@ -23,7 +23,6 @@ public class LookPointMoveScript : MonoBehaviour {
         }
 
         previousLookPoint = lookPoint;
-        MoveTo(lookPoint);
     }
 
     public void MoveBackToPreviousPoint()
