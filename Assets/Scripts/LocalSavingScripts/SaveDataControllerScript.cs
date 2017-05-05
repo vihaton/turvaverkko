@@ -6,25 +6,29 @@ using System.Collections.Generic;
 
 public class SaveDataControllerScript : MonoBehaviour
 {
+    public SafetyNetDataStruct defaultSafetyNet;
     public SaveDataContainer saveDataContainer = new SaveDataContainer();
     public bool lastSaveSuccessful;
     public DateTime lastSaved;
 
     private SafetyNetEntryData answerData = new SafetyNetEntryData();
+    private SafetyNetAdminScript SNAS;
     private PawnHandlerScript PDH;
 
     void Start()
     {
+        SNAS = FindObjectOfType<SafetyNetAdminScript>();
         PDH = FindObjectOfType<PawnHandlerScript>();
     }
 
     public void Save()
     {
-        //Get runtime data from pawnhandler
-        List<PawnDataStruct> entryDataDict = PDH.GetRuntimeData();
-        Debug.Log("SDCS, Save: runtime data count " + entryDataDict.Count);
+        //Get runtime data from safety net administration
+        List<SafetyNetDataStruct> safetyNets = new List<SafetyNetDataStruct>();
+        safetyNets.Add(defaultSafetyNet);
+        Debug.Log("SDCS, Save: runtime data count " + safetyNets.Count);
 
-        bool loadAndWrite = TryToLoadAndOverwrite(entryDataDict);
+        bool loadAndWrite = TryToLoadAndOverwrite(safetyNets);
         bool save = TryToSave();
 
         if (loadAndWrite && save)
@@ -38,21 +42,24 @@ public class SaveDataControllerScript : MonoBehaviour
         }
     }
 
-    private bool TryToLoadAndOverwrite(List<PawnDataStruct> entryDataDict)
+    private bool TryToLoadAndOverwrite(List<SafetyNetDataStruct> SafetyNetList)
     {
-        SafetyNetEntryData[] temp = MakeEntryDataArray(entryDataDict);
-
-        try
+        SafetyNetData[] safetyNets = new SafetyNetData[SafetyNetList.Count];
+        for (int i = 0; i < safetyNets.Length; i++)
         {
+            safetyNets[i] = MakeSafetyNetData(SafetyNetList[i]);
+        }
+
+        try {
             saveDataContainer = saveDataContainer.Load(Application.persistentDataPath + "/SafetyNetData.xml");
-            saveDataContainer.SaveDataArray = new SafetyNetEntryData[entryDataDict.Count];
-            for (int i = 0; i < temp.Length; i++)
+            saveDataContainer.SafetyNetArray = new SafetyNetData[SafetyNetList.Count];
+            for (int i = 0; i < safetyNets.Length; i++)
             {
-                saveDataContainer.SaveDataArray[i] = temp[i];
+                saveDataContainer.SafetyNetArray[i] = safetyNets[i];
             }
             return true;
-        }
-        catch (Exception e)
+
+        } catch (Exception e)
         {
             Debug.Log("Saving failed, error: " + e.ToString());
             return false;
@@ -74,12 +81,20 @@ public class SaveDataControllerScript : MonoBehaviour
         }
     }
 
+    private SafetyNetData MakeSafetyNetData(SafetyNetDataStruct SNDS)
+    {
+        SafetyNetData temp = new SafetyNetData();
+        temp.id = SNDS.GetId();
+        temp.SafetyNetArray = MakeEntryDataArray(SNDS.PHS.GetRuntimeData());
+        return temp;
+    }
+
     private SafetyNetEntryData[] MakeEntryDataArray(List<PawnDataStruct> entryData)
     {
         SafetyNetEntryData[] sned = new SafetyNetEntryData[entryData.Count];
-        for (int index = 0; index < entryData.Count; index++)
+        for (int i = 0; i < entryData.Count; i++)
         {
-            sned[index] = ConvertIntoSNED(entryData[index]);
+            sned[i] = ConvertIntoSNED(entryData[i]);
         }
         return sned;
     }
@@ -97,16 +112,16 @@ public class SaveDataControllerScript : MonoBehaviour
         return sned;
     }
 
-    internal SafetyNetEntryData[] LoadEntryDataFromStorage()
+    internal SafetyNetData[] LoadEntryDataFromStorage()
     {
-        return saveDataContainer.Load(Application.persistentDataPath + "/SafetyNetData.xml").SaveDataArray;
+        return saveDataContainer.Load(Application.persistentDataPath + "/SafetyNetData.xml").SafetyNetArray;
     }
 
 
     public void DestroySavedData()
     {
-        PDH.DestroyAllProgress();
-        TryToLoadAndOverwrite(PDH.GetRuntimeData());
+        SNAS.DestroyAllProgress();
+        TryToLoadAndOverwrite(SNAS.GetRuntimeData());
         TryToSave();
         Debug.Log("Destroyed saved data, runtimeData count " + PDH.GetRuntimeData().Count);
     }

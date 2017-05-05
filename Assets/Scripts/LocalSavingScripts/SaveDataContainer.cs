@@ -3,19 +3,19 @@ using System.Xml.Serialization;
 using System.IO;
 using System;
 
-[XmlRoot("AnswerDataCollection")]
+[XmlRoot("SafetyNetCollection")]
 public class SaveDataContainer
 {
     [XmlElement("Timestamp")]
     public string timeStamp;
 
-    [XmlArray("EntryDataArray"), XmlArrayItem("Entry")]
-    public SafetyNetEntryData[] SaveDataArray;
+    [XmlArray("SafetyNetArray"), XmlArrayItem("SafetyNet")]
+    public SafetyNetData[] SafetyNetArray;
     
     public void Save(string path)
     {
         Debug.Log("SavePath: " + path);
-        timeStamp = System.DateTime.Now.ToString();
+        timeStamp = DateTime.Now.ToString();
         var serializer = new XmlSerializer(typeof(SaveDataContainer));
         using (var stream = new FileStream(path, FileMode.Create))
         {
@@ -30,8 +30,8 @@ public class SaveDataContainer
 
         if (!File.Exists(path))
         {
-            Save(path);
             Debug.Log(path + ": file not found, lets make new one");
+            Save(path);
         }
 
         SaveDataContainer SDC = null;

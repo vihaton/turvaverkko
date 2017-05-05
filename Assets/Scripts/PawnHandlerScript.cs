@@ -8,10 +8,6 @@ public class PawnHandlerScript : MonoBehaviour {
 
     public GameObject origin;
     public GameObject spawnPoint;
-    public GameObject InfoWindow;
-    public InputField nameInput;
-    public InputField descriptionInput;
-    public Slider slider;
     public GameObject[] typePrefabs;
 
     private List<PawnDataStruct> runtimeData;
@@ -28,9 +24,8 @@ public class PawnHandlerScript : MonoBehaviour {
         SNAS = FindObjectOfType<SafetyNetAdminScript>();
     }
 
-    internal void CreatePawnsFromStorage()
+    internal void CreatePawnsFromStorage(SafetyNetEntryData[] entryData)
     {
-        SafetyNetEntryData[] entryData = SDCS.LoadEntryDataFromStorage();
         if (entryData == null)
             return;
         for (int i = 0; i < entryData.Length; i++)
@@ -53,9 +48,9 @@ public class PawnHandlerScript : MonoBehaviour {
         }
 
         UpdateToRuntimeData(pawnData);
-        pawnData.pawnName = nameInput.text;
-        pawnData.pawnDescription = descriptionInput.text;
-        pawnData.pawnImportance = slider.value;
+        pawnData.pawnName = SNAS.GetNameInputValue();
+        pawnData.pawnDescription = SNAS.GetDescriptionInputValue();
+        pawnData.pawnImportance = SNAS.GetSliderValue();
         examining = false;
     }
 
@@ -101,19 +96,16 @@ public class PawnHandlerScript : MonoBehaviour {
         examining = true;
         lastExaminedPawn = item;
         PawnDataStruct pawnData = item.GetComponent<PawnDataStruct>();
-        /*
+        
         if (pawnData == null)
         {
             Debug.Log("Item data is empty, gameobject: " + gameObject);
             return;
         }
-        */
+        
         Debug.Log("Item name " + pawnData.name + ", item description " + pawnData.pawnDescription);
 
-        nameInput.text = pawnData.pawnName;
-        descriptionInput.text = pawnData.pawnDescription;
-        slider.value = pawnData.pawnImportance;
-        InfoWindow.SetActive(true);
+        SNAS.OpenPawnInfo(pawnData, pawnData.pawnName, pawnData.pawnDescription, pawnData.pawnType, pawnData.pawnImportance);
     }
 
     public void DeletePawn()
@@ -155,8 +147,7 @@ public class PawnHandlerScript : MonoBehaviour {
 
     public void CancelUpdate()
     {
-        nameInput.text = "";
-        descriptionInput.text = "";
+        SNAS.ResetNameAndInputField();
         examining = false;
     }
 
