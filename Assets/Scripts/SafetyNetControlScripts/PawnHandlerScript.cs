@@ -9,6 +9,7 @@ public class PawnHandlerScript : MonoBehaviour {
     public GameObject origin;
     public GameObject spawnPoint;
     public GameObject[] typePrefabs;
+    public GameObject parent;
 
     private List<PawnDataStruct> runtimeData;
     private SaveDataControllerScript SDCS;
@@ -44,7 +45,7 @@ public class PawnHandlerScript : MonoBehaviour {
             pawnData = lastExaminedPawn.GetComponent<PawnDataStruct>();
         } else
         {
-            pawnData = CreatePawn(pawnPrefab, SNAS.currentSafetyNet);
+            pawnData = CreatePawn(pawnPrefab, parent);
         }
 
         UpdateToRuntimeData(pawnData);
@@ -106,7 +107,7 @@ public class PawnHandlerScript : MonoBehaviour {
         
         Debug.Log("Item name " + pawnData.name + ", item description " + pawnData.pawnDescription);
 
-        SNAS.OpenPawnInfo(pawnData, pawnData.pawnName, pawnData.pawnDescription, pawnData.pawnType, pawnData.pawnImportance);
+        SNAS.OpenPawnInfo(pawnData);
     }
 
     public void DeletePawn()

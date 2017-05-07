@@ -10,10 +10,10 @@ public class SafetyNetAdminScript : MonoBehaviour {
     public GameObject safetyNetPrefab;
     public float waitForTransition;
     public GameObject[] typePrefabs;
-    public GameObject[] typeImages;
     public GameObject infoWindow;
     public InputField nameInput;
     public InputField descriptionInput;
+    public TypeSwitcherScript typeSwitcher;
     public Slider slider;
 
     private SaveDataControllerScript SDCS;
@@ -83,6 +83,12 @@ public class SafetyNetAdminScript : MonoBehaviour {
         }
         currentSafetyNet = defaultNet;
         StartCoroutine(WaitAndMoveTo(defaultNet));
+    }
+
+    public void CreateANewPawn()
+    {
+        ResetInputFields();
+        infoWindow.SetActive(true);
     }
 
     private SafetyNetDataStruct InitializeSafetyNetData(SafetyNetData net, GameObject netGameObject)
@@ -159,23 +165,31 @@ public class SafetyNetAdminScript : MonoBehaviour {
 
     public void UpdatePawn()
     {
+        SetupPrefabForInstantiation(typeSwitcher.GetCurrentType());
         currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().UpdatePawn(pawnPrefabPlaceholder);
     }
 
-    internal void OpenPawnInfo(PawnDataStruct pawnData, string pawnName, string pawnDescription, int pawnType, float pawnImportance)
+    public void DeletePawn()
+    {
+        currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().DeletePawn();
+    }
+
+    internal void OpenPawnInfo(PawnDataStruct pawnData)
     {
         //Debug.Log("Item name " + pawnData.name + ", item description " + pawnData.pawnDescription);
 
+        infoWindow.SetActive(true);
         nameInput.text = pawnData.pawnName;
         descriptionInput.text = pawnData.pawnDescription;
         slider.value = pawnData.pawnImportance;
-        infoWindow.SetActive(true);
+        typeSwitcher.SetCurrentType(pawnData.pawnType);
     }
 
     internal void ResetInputFields()
     {
         nameInput.text = "";
         descriptionInput.text = "";
+        typeSwitcher.typeImg.color = Color.white;
         slider.value = 0;
     }
 

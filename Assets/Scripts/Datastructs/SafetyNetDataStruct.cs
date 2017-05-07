@@ -8,15 +8,17 @@ public class SafetyNetDataStruct : MonoBehaviour, ClickableInterface {
     [SerializeField]
     private int id;
     private PawnHandlerScript PHS;
+    private SafetyNetAdminScript SNAS;
 
     private void Awake()
     {
         PHS = GetComponentInChildren<PawnHandlerScript>();
+        SNAS = GetComponentInParent<SafetyNetAdminScript>();
     }
 
     public void Clicked()
     {
-        Debug.Log("Clicked on safety net!");
+        SNAS.CreateANewPawn();
     }
 
     public void Held()
