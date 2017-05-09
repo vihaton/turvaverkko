@@ -21,6 +21,7 @@ public class WorldPlaneInputScript : MonoBehaviour, ClickableInterface {
     {
         panning = true;
         dragOrigin = Input.mousePosition;
+        LPMS.StopAllCoroutines();
     }
 
     public void Held()
@@ -32,17 +33,20 @@ public class WorldPlaneInputScript : MonoBehaviour, ClickableInterface {
     {
 		if (panning)
         {
-            
-            Vector3 pos = Camera.main.ScreenToViewportPoint(dragOrigin - Input.mousePosition);
+            Vector3 newPos = Input.mousePosition;
+            Vector3 pos = Camera.main.ScreenToViewportPoint(dragOrigin - newPos);
             Vector3 move = new Vector3(pos.x, 0, pos.y);
 
             LPMS.MoveLookPoint(move);
+            dragOrigin = newPos;
 
             if (!Input.GetMouseButton(0))
             {
                 panning = false;
                 LPMS.PanStopped();
             }
+
+
         }
 	}
 

@@ -12,6 +12,7 @@ public class LookPointMoveScript : MonoBehaviour {
     private SafetyNetAdminScript SNAS;
     private GameObject previousLookPoint;
     private GameObject previousGoal;
+    private Coroutine moveAndRotate;
 
     private void Start()
     {
@@ -39,7 +40,7 @@ public class LookPointMoveScript : MonoBehaviour {
         MoveTo(previousLookPoint);
     }
 
-    public void MoveTo(GameObject goal)
+    public void MoveTo(GameObject goal, float overriddenLerpTime)
     {
         previousLookPoint = previousGoal;
         previousGoal = goal;
@@ -51,22 +52,27 @@ public class LookPointMoveScript : MonoBehaviour {
 
         Debug.Log("Moving to: (" + endPos.x + ", " + endPos.y + ", " + endPos.z + ")");
 
-        StartCoroutine(MoveAndRotate(startPos, endPos, startRot, endRot, goal));
+        moveAndRotate = StartCoroutine(MoveAndRotate(startPos, endPos, startRot, endRot, goal));
+    }
+
+    public void MoveTo(GameObject goal)
+    {
+        MoveTo(goal, lerpTime);
     }
 
     internal void PanStopped()
     {
         GameObject closestSafetyNet = SNAS.GetClosestSafetyNet(transform.position);
         SNAS.ChangeSafetyNet(closestSafetyNet);
-        MoveTo(closestSafetyNet);
+        MoveTo(closestSafetyNet, 0.00001f);
     }
 
-    IEnumerator MoveAndRotate(Vector3 startPos, Vector3 endPos, Quaternion startRot, Quaternion endRot, GameObject goal)
+    IEnumerator MoveAndRotate(Vector3 startPos, Vector3 endPos, Quaternion startRot, Quaternion endRot, GameObject goal, float overriddenLerpTime)
     {
         float deltaTime = 0;
-        while (deltaTime < lerpTime)
+        while (deltaTime < overriddenLerpTime)
         {
-            float percentage = deltaTime / lerpTime;
+            float percentage = deltaTime / overriddenLerpTime;
 
             //make the transition smooth af
             percentage = percentage * percentage * percentage * (percentage * (6f * percentage - 15f) + 10f);
@@ -78,5 +84,12 @@ public class LookPointMoveScript : MonoBehaviour {
 
             yield return null;
         }
+        moveAndRotate = null;
+    }
+
+    IEnumerator MoveAndRotate(Vector3 startPos, Vector3 endPos, Quaternion startRot, Quaternion endRot, GameObject goal)
+    {
+        StartCoroutine(MoveAndRotate(startPos, endPos, startRot, endRot, goal, lerpTime));
+        yield return null;
     }
 }
