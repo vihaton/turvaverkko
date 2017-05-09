@@ -6,7 +6,7 @@ using UnityEngine;
 public class InputHandlerScript : MonoBehaviour {
 
     public float holdingTime;
-    public bool handlingInput = false;
+    public bool currentlyHandlingInput = false;
     public bool incomingInput = false;
     public GameObject[] popups;
 
@@ -25,7 +25,7 @@ public class InputHandlerScript : MonoBehaviour {
         if (Input.GetMouseButtonDown(0) && NoPopupsActive())
         {
             t = Time.time;
-            handlingInput = true;
+            currentlyHandlingInput = true;
             GetObjectPointed();
         }
         
@@ -98,12 +98,12 @@ public class InputHandlerScript : MonoBehaviour {
     {
         while (true)
         {
-            if (handlingInput)
+            if (currentlyHandlingInput)
             {
-                if (timer > holdingTime || Input.GetMouseButtonUp(0))
+                if (lastItemPointed.tag.Equals("WorldPlane") || timer > holdingTime || Input.GetMouseButtonUp(0))
                 {
                     incomingInput = true;
-                    handlingInput = false;
+                    currentlyHandlingInput = false;
                     timer = 0;
                 } else
                 {

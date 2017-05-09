@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SafetyNetDataStruct : MonoBehaviour, ClickableInterface {
+public class SafetyNetDataStruct : MonoBehaviour {
     
     [SerializeField]
     private int id;
@@ -14,11 +14,6 @@ public class SafetyNetDataStruct : MonoBehaviour, ClickableInterface {
     {
         PHS = GetComponentInChildren<PawnHandlerScript>();
         SNAS = GetComponentInParent<SafetyNetAdminScript>();
-    }
-
-    public void Clicked()
-    {
-        SNAS.CreateANewPawn();
     }
 
     public void Held()

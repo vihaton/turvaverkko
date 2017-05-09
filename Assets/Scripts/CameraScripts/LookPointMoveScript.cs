@@ -1,17 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LookPointMoveScript : MonoBehaviour {
 
     public float lerpTime;
+    public float baseSpeed;
     public GameObject safetyNetArea;
 
+    private SafetyNetAdminScript SNAS;
     private GameObject previousLookPoint;
     private GameObject previousGoal;
 
     private void Start()
     {
+        SNAS = FindObjectOfType<SafetyNetAdminScript>();
         GameObject lookPoint;
 
         if (safetyNetArea.transform.childCount > 0)
@@ -23,6 +27,11 @@ public class LookPointMoveScript : MonoBehaviour {
         }
 
         previousLookPoint = lookPoint;
+    }
+
+    public void MoveLookPoint(Vector3 movementVector)
+    {
+        gameObject.transform.Translate(movementVector * baseSpeed, Space.World);
     }
 
     public void MoveBackToPreviousPoint()
@@ -43,6 +52,13 @@ public class LookPointMoveScript : MonoBehaviour {
         Debug.Log("Moving to: (" + endPos.x + ", " + endPos.y + ", " + endPos.z + ")");
 
         StartCoroutine(MoveAndRotate(startPos, endPos, startRot, endRot, goal));
+    }
+
+    internal void PanStopped()
+    {
+        GameObject closestSafetyNet = SNAS.GetClosestSafetyNet(transform.position);
+        SNAS.ChangeSafetyNet(closestSafetyNet);
+        MoveTo(closestSafetyNet);
     }
 
     IEnumerator MoveAndRotate(Vector3 startPos, Vector3 endPos, Quaternion startRot, Quaternion endRot, GameObject goal)

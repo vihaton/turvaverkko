@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 public class SaveDataControllerScript : MonoBehaviour
 {
-    public SafetyNetDataStruct defaultSafetyNet;
     public SaveDataContainer saveDataContainer = new SaveDataContainer();
     public bool lastSaveSuccessful;
     public DateTime lastSaved;

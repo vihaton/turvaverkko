@@ -55,6 +55,29 @@ public class SafetyNetAdminScript : MonoBehaviour {
         return nameInput.text;
     }
 
+    internal void ChangeSafetyNet(GameObject closestSafetyNet)
+    {
+        currentSafetyNet = closestSafetyNet;
+    }
+
+    internal GameObject GetClosestSafetyNet(Vector3 position)
+    {
+        SafetyNetDataStruct closest = runtimeData[0];
+        float minDistance = float.MaxValue;
+
+        foreach (SafetyNetDataStruct snds in runtimeData)
+        {
+            float distance = Vector3.Distance(position, snds.gameObject.transform.position);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closest = snds;
+            }
+        }
+
+        return closest.gameObject;
+    }
+
     internal string GetDescriptionInputValue()
     {
         return descriptionInput.text;
@@ -94,8 +117,8 @@ public class SafetyNetAdminScript : MonoBehaviour {
     private SafetyNetDataStruct InitializeSafetyNetData(SafetyNetData net, GameObject netGameObject)
     {
         SafetyNetDataStruct SNDS = netGameObject.GetComponent<SafetyNetDataStruct>();
-        runtimeData.Add(SNDS);
         SNDS.SetId(net.id);
+        runtimeData.Add(SNDS);
 
         return SNDS;
     }
@@ -114,11 +137,28 @@ public class SafetyNetAdminScript : MonoBehaviour {
 
         return instantiated;
     }
-
-    //So far only generic counter, nothing fancier
+    
     private int GenerateId()
     {
-        return runtimeData.Count - 1;
+        int id = runtimeData.Count;
+        while (FindSafetyNetWithId(id) != null)
+        {
+            id++;
+        }
+        return runtimeData.Count;
+    }
+
+    private SafetyNetDataStruct FindSafetyNetWithId(int id)
+    {
+        foreach (SafetyNetDataStruct snds in runtimeData)
+        {
+            if (snds.GetId() == id)
+            {
+                return snds;
+            }
+        }
+
+        return null;
     }
 
     private IEnumerator WaitAndMoveTo(GameObject newSafetyNet)
