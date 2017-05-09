@@ -15,6 +15,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
     public InputField descriptionInput;
     public TypeSwitcherScript typeSwitcher;
     public Slider slider;
+    public Button deleteButton;
 
     private SaveDataControllerScript SDCS;
     private LookPointMoveScript LPMS;
@@ -111,6 +112,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
     public void CreateANewPawn()
     {
         ResetInputFields();
+        deleteButton.interactable = false;
         infoWindow.SetActive(true);
     }
 
@@ -170,7 +172,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
             yield return null;
         }
 
-        Debug.Log("Move to " + newSafetyNet.transform.position);
+        //Debug.Log("Move to " + newSafetyNet.transform.position);
         LPMS.MoveTo(newSafetyNet);
     }
 
@@ -205,6 +207,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
 
     public void UpdatePawn()
     {
+        deleteButton.interactable = true;
         SetupPrefabForInstantiation(typeSwitcher.GetCurrentType());
         currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().UpdatePawn(pawnPrefabPlaceholder);
     }

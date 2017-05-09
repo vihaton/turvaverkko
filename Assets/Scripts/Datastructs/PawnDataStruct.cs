@@ -18,7 +18,6 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
 
     private void Start()
     {
-        pawnPosition = this.transform.position;
         UpdateDistanceToOrigin();
         UpdateDistanceVectorFromOrigin();
     }
@@ -70,6 +69,11 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
     public void Clicked()
     {
         PHS.ShowPawnInformation(this.gameObject);
+    }
+
+    public void UpdatePosition(Vector3 newPosition)
+    {
+        pawnPosition = newPosition;
     }
 
     public void Held()

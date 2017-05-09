@@ -35,7 +35,7 @@ public class DragListenerScript : MonoBehaviour {
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             Vector3 rayPoint = ray.GetPoint(distance);
-            transform.position = new Vector3(rayPoint.x, transform.position.y, rayPoint.z);
+            transform.position = new Vector3(rayPoint.x, 1.5f, rayPoint.z);
         }
     }
 

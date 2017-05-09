@@ -57,12 +57,18 @@ public class PawnHandlerScript : MonoBehaviour {
 
     private PawnDataStruct CreatePawn(GameObject pawnPrefab, GameObject parent)
     {
-        GameObject pawn = Instantiate(pawnPrefab, spawnPoint.transform.position, new Quaternion(0, 0, 0, 0));
-        pawn.transform.SetParent(parent.transform);
+        GameObject pawn = InstantiatePawn(pawnPrefab, spawnPoint.transform.position, parent);
         PawnDataStruct pawnData = pawn.GetComponent<PawnDataStruct>();
         SetPawnType(pawnPrefab, pawnData);
 
         return pawnData;
+    }
+
+    private GameObject InstantiatePawn(GameObject pawnPrefab, Vector3 position, GameObject parent)
+    {
+        GameObject pawn = Instantiate(pawnPrefab, position, new Quaternion(0, 0, 0, 0));
+        pawn.transform.SetParent(parent.transform);
+        return pawn;
     }
 
     private void SetPawnType(GameObject prefab, PawnDataStruct pawnData)
@@ -141,8 +147,7 @@ public class PawnHandlerScript : MonoBehaviour {
     private GameObject MakeAGameObject(SafetyNetEntryData safetyNetEntryData)
     {
         GameObject prefab = SNAS.GetTypePrefab(safetyNetEntryData.entryType);
-        GameObject go = Instantiate(prefab, SNAS.gameObject.transform);
-        go.transform.position = safetyNetEntryData.entryPosition;
+        GameObject go = InstantiatePawn(prefab, safetyNetEntryData.entryPosition, SNAS.gameObject);
 
         return go;
     }

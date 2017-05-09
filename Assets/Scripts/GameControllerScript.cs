@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GameControllerScript : MonoBehaviour {
 
+    public bool saveProgress;
+
     private SaveDataControllerScript SDCS;
     private SafetyNetAdminScript SNAS;
 
@@ -17,6 +19,7 @@ public class GameControllerScript : MonoBehaviour {
 
     private void OnApplicationQuit()
     {
-        SDCS.Save();
+        if (saveProgress)
+            SDCS.Save();
     }
 }
