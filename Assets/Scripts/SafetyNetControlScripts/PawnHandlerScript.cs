@@ -11,17 +11,19 @@ public class PawnHandlerScript : MonoBehaviour {
     public GameObject[] typePrefabs;
     public GameObject parent;
 
-    private List<PawnDataStruct> runtimeData;
+    public List<PawnDataStruct> runtimeData;
     private SaveDataControllerScript SDCS;
+    private PawnInputHandlerScript PIHS;
     private SafetyNetAdminScript SNAS;
     private GameObject pawnPrefabPlaceholder;
     private GameObject lastExaminedPawn;
-    private bool examining;
+    public bool examining;
 
     private void Awake()
     {
         runtimeData = new List<PawnDataStruct>();
         SDCS = FindObjectOfType<SaveDataControllerScript>();
+        PIHS = FindObjectOfType<PawnInputHandlerScript>();
         SNAS = FindObjectOfType<SafetyNetAdminScript>();
     }
 
@@ -36,7 +38,7 @@ public class PawnHandlerScript : MonoBehaviour {
         }
     }
 
-    public void UpdatePawn(GameObject pawnPrefab)
+    public void UpdatePawn(string name, string description, float importance, GameObject pawnPrefab)
     {
         PawnDataStruct pawnData = null;
 
@@ -49,9 +51,9 @@ public class PawnHandlerScript : MonoBehaviour {
         }
 
         UpdateToRuntimeData(pawnData);
-        pawnData.pawnName = SNAS.GetNameInputValue();
-        pawnData.pawnDescription = SNAS.GetDescriptionInputValue();
-        pawnData.pawnImportance = SNAS.GetSliderValue();
+        pawnData.pawnName = name;
+        pawnData.pawnDescription = description;
+        pawnData.pawnImportance = importance;
         examining = false;
     }
 
@@ -113,7 +115,7 @@ public class PawnHandlerScript : MonoBehaviour {
         
         Debug.Log("Item name " + pawnData.name + ", item description " + pawnData.pawnDescription);
 
-        SNAS.OpenPawnInfo(pawnData);
+        PIHS.OpenPawnInfo(pawnData);
     }
 
     public void DeletePawn()
@@ -147,14 +149,14 @@ public class PawnHandlerScript : MonoBehaviour {
     private GameObject MakeAGameObject(SafetyNetEntryData safetyNetEntryData)
     {
         GameObject prefab = SNAS.GetTypePrefab(safetyNetEntryData.entryType);
-        GameObject go = InstantiatePawn(prefab, safetyNetEntryData.entryPosition, SNAS.gameObject);
+        GameObject go = InstantiatePawn(prefab, safetyNetEntryData.entryPosition, SNAS.gameObject); 
 
         return go;
     }
 
     public void CancelUpdate()
     {
-        SNAS.ResetInputFields();
+        PIHS.ResetInputFields();
         examining = false;
     }
 

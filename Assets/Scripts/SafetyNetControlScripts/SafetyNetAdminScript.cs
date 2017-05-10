@@ -10,12 +10,6 @@ public class SafetyNetAdminScript : MonoBehaviour {
     public GameObject safetyNetPrefab;
     public float waitForTransition;
     public GameObject[] typePrefabs;
-    public GameObject infoWindow;
-    public InputField nameInput;
-    public InputField descriptionInput;
-    public TypeSwitcherScript typeSwitcher;
-    public Slider slider;
-    public Button deleteButton;
 
     private SaveDataControllerScript SDCS;
     private LookPointMoveScript LPMS;
@@ -51,11 +45,6 @@ public class SafetyNetAdminScript : MonoBehaviour {
         StartCoroutine(WaitAndMoveTo(newSafetyNet));
     }
 
-    internal string GetNameInputValue()
-    {
-        return nameInput.text;
-    }
-
     internal void ChangeSafetyNet(GameObject closestSafetyNet)
     {
         currentSafetyNet = closestSafetyNet;
@@ -79,16 +68,6 @@ public class SafetyNetAdminScript : MonoBehaviour {
         return closest.gameObject;
     }
 
-    internal string GetDescriptionInputValue()
-    {
-        return descriptionInput.text;
-    }
-
-    internal float GetSliderValue()
-    {
-        return slider.value;
-    }
-
     public void CreatePawnsFromStorage()
     {
         GameObject defaultNet = null;
@@ -107,13 +86,6 @@ public class SafetyNetAdminScript : MonoBehaviour {
         }
         currentSafetyNet = defaultNet;
         StartCoroutine(WaitAndMoveTo(defaultNet));
-    }
-
-    public void CreateANewPawn()
-    {
-        ResetInputFields();
-        deleteButton.interactable = false;
-        infoWindow.SetActive(true);
     }
 
     private SafetyNetDataStruct InitializeSafetyNetData(SafetyNetData net, GameObject netGameObject)
@@ -176,6 +148,13 @@ public class SafetyNetAdminScript : MonoBehaviour {
         LPMS.MoveTo(newSafetyNet);
     }
 
+    public void UpdateCurrentSafetyNet(string name, string description, float importance, int type)
+    {
+        SetupPrefabForInstantiation(type);
+        
+        currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().UpdatePawn(name, description, importance, pawnPrefabPlaceholder);
+    }
+
     /*
      * SetupPrefabForInstantiation is called when user creates new pawns to the net,
      * in order to keep track of what kind of prefab is needed when instantiation
@@ -183,7 +162,6 @@ public class SafetyNetAdminScript : MonoBehaviour {
      **/
     private void SetupPrefabForInstantiation(int i)
     {
-        ResetInputFields();
         if (i >= 0 && i < (typePrefabs.Length - 1))
         {
             pawnPrefabPlaceholder = typePrefabs[i];
@@ -205,35 +183,9 @@ public class SafetyNetAdminScript : MonoBehaviour {
         runtimeData.Clear();
     }
 
-    public void UpdatePawn()
-    {
-        deleteButton.interactable = true;
-        SetupPrefabForInstantiation(typeSwitcher.GetCurrentType());
-        currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().UpdatePawn(pawnPrefabPlaceholder);
-    }
-
     public void DeletePawn()
     {
         currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().DeletePawn();
-    }
-
-    internal void OpenPawnInfo(PawnDataStruct pawnData)
-    {
-        //Debug.Log("Item name " + pawnData.name + ", item description " + pawnData.pawnDescription);
-
-        infoWindow.SetActive(true);
-        nameInput.text = pawnData.pawnName;
-        descriptionInput.text = pawnData.pawnDescription;
-        slider.value = pawnData.pawnImportance;
-        typeSwitcher.SetCurrentType(pawnData.pawnType);
-    }
-
-    internal void ResetInputFields()
-    {
-        nameInput.text = "";
-        descriptionInput.text = "";
-        typeSwitcher.typeImg.color = Color.white;
-        slider.value = 0;
     }
 
     public List<SafetyNetDataStruct> GetRuntimeData()

@@ -5,16 +5,15 @@ using UnityEngine;
 
 public class SafetyNetInputScript : MonoBehaviour, ClickableInterface {
 
-    private SafetyNetAdminScript SNAS;
-    private PawnHandlerScript PHS;
+    private PawnInputHandlerScript PIHS;
     
     void Start () {
-        SNAS = FindObjectOfType<SafetyNetAdminScript>();
+        PIHS = FindObjectOfType<PawnInputHandlerScript>();
 	}
 
     public void Clicked()
     {
-        SNAS.CreateANewPawn();
+        PIHS.OpenPawnCreationForm();
     }
 
     public void Held()
