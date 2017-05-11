@@ -13,13 +13,10 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
     public float distanceToOrigin;
 
     private PawnHandlerScript PHS;
-    private Vector3 distanceVectorFromOrigin = new Vector3(0, 0, 0);
-
 
     private void Start()
     {
         UpdateDistanceToOrigin();
-        UpdateDistanceVectorFromOrigin();
     }
 
     private void Awake()
@@ -44,16 +41,6 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
         if (pawnName != compared.pawnName || pawnType != compared.pawnType || pawnPosition != compared.pawnPosition)
             return false;
         return true;
-    }
-
-    public void UpdateDistanceVectorFromOrigin()
-    {
-        distanceVectorFromOrigin = gameObject.transform.position - PHS.GetOrigin().transform.position;
-    }
-
-    public Vector3 getDistanceVectorFromOrigin()
-    {
-        return distanceVectorFromOrigin;
     }
 
     public void UpdateDistanceToOrigin()

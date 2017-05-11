@@ -5,20 +5,22 @@ using UnityEngine;
 
 public class SafetyNetInputScript : MonoBehaviour, ClickableInterface {
 
-    private PawnInputHandlerScript PIHS;
+    private PawnInputHandlerScript pawnInput;
+    private SafetyNetInputHandlerScript safetyNetInput;
     
     void Start () {
-        PIHS = FindObjectOfType<PawnInputHandlerScript>();
+        pawnInput = FindObjectOfType<PawnInputHandlerScript>();
+        safetyNetInput = FindObjectOfType<SafetyNetInputHandlerScript>();
 	}
 
     public void Clicked()
     {
-        PIHS.OpenPawnCreationForm();
+        pawnInput.OpenPawnCreationForm();
     }
 
     public void Held()
     {
-        Debug.Log("Held on safetynet");
+        safetyNetInput.OpenSafetyInfo(GetComponentInParent<SafetyNetDataStruct>());
     }
 
 }

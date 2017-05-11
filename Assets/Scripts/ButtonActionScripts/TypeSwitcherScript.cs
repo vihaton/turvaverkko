@@ -11,7 +11,7 @@ public class TypeSwitcherScript : MonoBehaviour {
     public GameObject types;
 
     [SerializeField]
-    private int currentType = -1;
+    private int currentType = 3;
     private Dictionary<int, ToggleDataStruct> toggles;
     public Image typeImg;
 

@@ -113,7 +113,7 @@ public class PawnHandlerScript : MonoBehaviour {
             return;
         }
         
-        Debug.Log("Item name " + pawnData.name + ", item description " + pawnData.pawnDescription);
+        Debug.Log("Show item named " + pawnData.name + ", item description " + pawnData.pawnDescription);
 
         PIHS.OpenPawnInfo(pawnData);
     }

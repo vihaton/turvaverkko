@@ -23,7 +23,7 @@ public class SaveDataControllerScript : MonoBehaviour
     public void Save()
     {
         //Get runtime data from safety net administration
-        List<SafetyNetDataStruct> safetyNets = SNAS.GetRuntimeData();
+        List<SafetyNetDataStruct> safetyNets = SNAS.GetAllRuntimeData();
         Debug.Log("SDCS, Save: runtime data count " + safetyNets.Count);
 
         bool loadAndWrite = TryToLoadAndOverwrite(safetyNets);
@@ -82,7 +82,9 @@ public class SaveDataControllerScript : MonoBehaviour
     private SafetyNetData MakeSafetyNetData(SafetyNetDataStruct SNDS)
     {
         SafetyNetData temp = new SafetyNetData();
-        temp.id = SNDS.GetId();
+        temp.id = SNDS.id;
+        temp.safetyNetName = SNDS.safetyNetName;
+        temp.safetyNetDescription = SNDS.safetyNetDescription;
         temp.SafetyNetArray = MakeEntryDataArray(SNDS.GetRuntimeData());
         return temp;
     }
@@ -119,7 +121,7 @@ public class SaveDataControllerScript : MonoBehaviour
     public void DestroySavedData()
     {
         SNAS.DestroyAllProgress();
-        TryToLoadAndOverwrite(SNAS.GetRuntimeData());
+        TryToLoadAndOverwrite(SNAS.GetAllRuntimeData());
         TryToSave();
         Debug.Log("Destroyed saved data, runtimeData count " + PDH.GetRuntimeData().Count);
     }

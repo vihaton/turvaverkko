@@ -6,20 +6,22 @@ using UnityEngine;
 public class XYStatsControlScript : MonoBehaviour {
 
     public List<WMG_Series> seriesList;
-    public PawnHandlerScript PHS;
+
+    private SafetyNetAdminScript SNAS;
 
     private void Start()
     {
-        PHS = FindObjectOfType<PawnHandlerScript>();
+        SNAS = FindObjectOfType<SafetyNetAdminScript>();
     }
 
     public void UpdateValues()
     {
         ClearPointValues();
-        List<PawnDataStruct> runtimeData = PHS.GetRuntimeData();
+        List<PawnDataStruct> runtimeData = SNAS.GetCurrentSafetyNetRuntimeData();
 
         foreach (PawnDataStruct pds in runtimeData)
         {
+            pds.UpdateDistanceToOrigin();
             WMG_Series series = seriesList[pds.pawnType];
             series.pointValues.Add(new Vector2(pds.pawnImportance, pds.distanceToOrigin));
         }

@@ -12,6 +12,7 @@ public class PawnInputHandlerScript : MonoBehaviour {
     public TypeSwitcherScript typeSwitcher;
     public Slider slider;
     public Button deleteButton;
+    public Text infoText;
 
     private SafetyNetAdminScript SNAS;
 
@@ -22,10 +23,12 @@ public class PawnInputHandlerScript : MonoBehaviour {
 
     public void OpenPawnInfo(PawnDataStruct pawnData)
     {
-        //Debug.Log("Item name " + pawnData.name + ", item description " + pawnData.pawnDescription);
-        ResetInputFields();
+        ToggleForm(false);
+        CopyDataFromStruct(pawnData);
+    }
 
-        infoWindow.SetActive(true);
+    private void CopyDataFromStruct(PawnDataStruct pawnData)
+    {
         nameInput.text = pawnData.pawnName;
         descriptionInput.text = pawnData.pawnDescription;
         slider.value = pawnData.pawnImportance;
@@ -34,22 +37,41 @@ public class PawnInputHandlerScript : MonoBehaviour {
 
     public void OpenPawnCreationForm()
     {
+        ToggleForm(true);
+    }
+
+    private void ToggleForm(bool openingForPawnCreation)
+    {
         ResetInputFields();
-        deleteButton.interactable = false;
-        infoWindow.SetActive(true);
+        deleteButton.interactable = !openingForPawnCreation;
+        infoWindow.SetActive(!infoWindow.activeSelf);
     }
 
     public void UpdatePawn()
     {
+        if (typeSwitcher.GetCurrentType() == 3)
+        {
+            infoText.text = "Valitse ensin tyyppi painamalla Tyyppi -nappulaa";
+            return;
+        }
         deleteButton.interactable = true;
-        SNAS.UpdateCurrentSafetyNet(nameInput.text, descriptionInput.text, slider.value, typeSwitcher.GetCurrentType());
-        //currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().UpdatePawn(pawnPrefabPlaceholder);
+        bool done = SNAS.UpdatePawn(nameInput.text, descriptionInput.text, slider.value, typeSwitcher.GetCurrentType());
+        if (done)
+        {
+            infoWindow.SetActive(false);
+        }
+    }
+
+    public void CloseForm()
+    {
+        ToggleForm(false);
     }
 
     public void ResetInputFields()
     {
         nameInput.text = "";
         descriptionInput.text = "";
+        infoText.text = "";
         typeSwitcher.typeImg.color = Color.white;
         slider.value = 0;
     }

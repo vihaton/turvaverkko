@@ -15,6 +15,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
     private LookPointMoveScript LPMS;
     private List<SafetyNetDataStruct> runtimeData = new List<SafetyNetDataStruct>();
     private GameObject pawnPrefabPlaceholder;
+    private bool examining = false;
 
     private void Start()
     {
@@ -35,19 +36,52 @@ public class SafetyNetAdminScript : MonoBehaviour {
         }
     }
 
-    public void CreateSafetyNet()
+    public SafetyNetDataStruct CreateSafetyNet()
     {
-        Debug.Log("Creating new safety net!");
         GameObject newSafetyNet = MakeASafetyNet();
-        InitializeSafetyNetData(newSafetyNet);
+        SafetyNetDataStruct snds = InitializeSafetyNetData(newSafetyNet);
         currentSafetyNet = newSafetyNet;
         
         StartCoroutine(WaitAndMoveTo(newSafetyNet));
+        return snds;
     }
 
-    internal void ChangeSafetyNet(GameObject closestSafetyNet)
+    public void DeleteSafetyNet()
     {
-        currentSafetyNet = closestSafetyNet;
+        Vector3 currentPosition = currentSafetyNet.transform.position;
+        SafetyNetDataStruct snds = currentSafetyNet.GetComponent<SafetyNetDataStruct>();
+        Destroy(currentSafetyNet);
+        runtimeData.Remove(snds);
+
+        MoveToClosestSafetyNet(currentPosition);
+    }
+
+    private void MoveToClosestSafetyNet(Vector3 currentPosition)
+    {
+        GameObject closest = GetClosestSafetyNet(currentPosition);
+        ChangeSafetyNet(closest);
+        LPMS.MoveTo(closest);
+    }
+
+    internal bool UpdateSafetyNet(string newName, string newDescription)
+    {
+        SafetyNetDataStruct snds = null;
+
+        if (examining)
+        {
+            snds = currentSafetyNet.GetComponent<SafetyNetDataStruct>();
+        } else
+        {
+            snds = CreateSafetyNet();
+        }
+        snds.UpdateSafetyNet(newName, newDescription);
+        examining = false;
+        return true;
+    }
+
+    internal void ChangeSafetyNet(GameObject newSafetyNet)
+    {
+        currentSafetyNet = newSafetyNet;
     }
 
     internal GameObject GetClosestSafetyNet(Vector3 position)
@@ -92,15 +126,18 @@ public class SafetyNetAdminScript : MonoBehaviour {
     {
         SafetyNetDataStruct SNDS = netGameObject.GetComponent<SafetyNetDataStruct>();
         SNDS.SetId(net.id);
+        SNDS.safetyNetName = net.safetyNetName;
+        SNDS.safetyNetDescription = net.safetyNetDescription;
         runtimeData.Add(SNDS);
 
         return SNDS;
     }
 
-    private void InitializeSafetyNetData(GameObject netGameObject)
+    private SafetyNetDataStruct InitializeSafetyNetData(GameObject netGameObject)
     {
         SafetyNetDataStruct SNDS = netGameObject.GetComponent<SafetyNetDataStruct>();
         runtimeData.Add(SNDS);
+        return SNDS;
     }
 
     private GameObject MakeASafetyNet()
@@ -126,7 +163,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
     {
         foreach (SafetyNetDataStruct snds in runtimeData)
         {
-            if (snds.GetId() == id)
+            if (snds.id == id)
             {
                 return snds;
             }
@@ -148,11 +185,11 @@ public class SafetyNetAdminScript : MonoBehaviour {
         LPMS.MoveTo(newSafetyNet);
     }
 
-    public void UpdateCurrentSafetyNet(string name, string description, float importance, int type)
+    public bool UpdatePawn(string name, string description, float importance, int type)
     {
         SetupPrefabForInstantiation(type);
-        
         currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().UpdatePawn(name, description, importance, pawnPrefabPlaceholder);
+        return true;
     }
 
     /*
@@ -188,7 +225,12 @@ public class SafetyNetAdminScript : MonoBehaviour {
         currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().DeletePawn();
     }
 
-    public List<SafetyNetDataStruct> GetRuntimeData()
+    public List<PawnDataStruct> GetCurrentSafetyNetRuntimeData()
+    {
+        return currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().GetRuntimeData();
+    }
+
+    public List<SafetyNetDataStruct> GetAllRuntimeData()
     {
         return runtimeData;
     }

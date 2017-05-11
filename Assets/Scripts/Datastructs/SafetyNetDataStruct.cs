@@ -5,8 +5,10 @@ using UnityEngine;
 
 public class SafetyNetDataStruct : MonoBehaviour {
     
-    [SerializeField]
-    private int id;
+    public int id;
+    public string safetyNetName;
+    public string safetyNetDescription;
+
     private PawnHandlerScript PHS;
     private SafetyNetAdminScript SNAS;
 
@@ -26,11 +28,6 @@ public class SafetyNetDataStruct : MonoBehaviour {
         this.id = id;
     }
 
-    public int GetId()
-    {
-        return this.id;
-    }
-
     internal void CreatePawnsFromStorage(SafetyNetEntryData[] safetyNetArray)
     {
         PHS.CreatePawnsFromStorage(safetyNetArray);
@@ -39,5 +36,11 @@ public class SafetyNetDataStruct : MonoBehaviour {
     internal List<PawnDataStruct> GetRuntimeData()
     {
         return PHS.GetRuntimeData();
+    }
+
+    internal void UpdateSafetyNet(string newName, string newDescription)
+    {
+        this.safetyNetName = newName;
+        this.safetyNetDescription = newDescription;
     }
 }

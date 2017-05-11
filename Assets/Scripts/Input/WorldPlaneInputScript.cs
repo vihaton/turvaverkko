@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class WorldPlaneInputScript : MonoBehaviour, ClickableInterface {
 
@@ -19,9 +20,12 @@ public class WorldPlaneInputScript : MonoBehaviour, ClickableInterface {
 
     public void Clicked()
     {
-        panning = true;
-        dragOrigin = Input.mousePosition;
-        LPMS.StopAllCoroutines();
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            panning = true;
+            dragOrigin = Input.mousePosition;
+            LPMS.StopAllCoroutines();
+        }
     }
 
     public void Held()
