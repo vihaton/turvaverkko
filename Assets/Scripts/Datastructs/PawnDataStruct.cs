@@ -12,20 +12,10 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
     public Vector3 pawnPosition;
     public float distanceToOrigin;
     public NameTextAnimationScript NTAS;
+    public bool displayingInfo = false;
 
-    private PawnHandlerScript PHS;
+    public PawnHandlerScript PHS;
     private bool clickedOnce = false;
-    public bool showingName = false;
-
-    private void Start()
-    {
-        UpdateDistanceToOrigin();
-    }
-
-    private void Awake()
-    {
-        PHS = FindObjectOfType<PawnHandlerScript>();
-    }
 
     public override int GetHashCode()
     {
@@ -59,7 +49,7 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
 
     public void UpdatePosition()
     {
-        pawnPosition = gameObject.transform.position;
+        pawnPosition = gameObject.transform.localPosition;
     } 
 
     public float GetDistanceToOrigin()
@@ -69,9 +59,9 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
 
     public void Clicked()
     {
-        if (clickedOnce && !showingName)
+        if (clickedOnce && !displayingInfo)
         {
-            showingName = true;
+            displayingInfo = true;
             PHS.ShowPawnInformation(this.gameObject);
         } else
         {
@@ -89,7 +79,7 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
 
     public void PawnInformationClosed()
     {
-        showingName = false;
+        displayingInfo = false;
     }
 
     private IEnumerator ShowName()

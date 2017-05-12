@@ -9,15 +9,15 @@ public class PawnHandlerScript : MonoBehaviour {
     public GameObject origin;
     public GameObject spawnPoint;
     public GameObject[] typePrefabs;
-    public GameObject parent;
-
+    public GameObject pawnParent;
     public List<PawnDataStruct> runtimeData;
+    public GameObject lastExaminedPawn;
+    public bool examining;
+
     private SaveDataControllerScript SDCS;
     private PawnInputHandlerScript PIHS;
     private SafetyNetAdminScript SNAS;
     private GameObject pawnPrefabPlaceholder;
-    public GameObject lastExaminedPawn;
-    public bool examining;
 
     private void Awake()
     {
@@ -25,6 +25,7 @@ public class PawnHandlerScript : MonoBehaviour {
         SDCS = FindObjectOfType<SaveDataControllerScript>();
         PIHS = FindObjectOfType<PawnInputHandlerScript>();
         SNAS = FindObjectOfType<SafetyNetAdminScript>();
+        pawnParent = this.gameObject;
     }
 
     internal void CreatePawnsFromStorage(SafetyNetEntryData[] entryData)
@@ -47,10 +48,10 @@ public class PawnHandlerScript : MonoBehaviour {
             pawnData = lastExaminedPawn.GetComponent<PawnDataStruct>();
         } else
         {
-            pawnData = CreatePawn(pawnPrefab, parent);
+            pawnData = CreatePawn(pawnPrefab, pawnParent);
         }
 
-        pawnData.UpdatePosition();
+        pawnData.UpdateAll();
         UpdateToRuntimeData(pawnData);
         pawnData.pawnName = name;
         pawnData.pawnDescription = description;
@@ -58,19 +59,22 @@ public class PawnHandlerScript : MonoBehaviour {
         examining = false;
     }
 
-    private PawnDataStruct CreatePawn(GameObject pawnPrefab, GameObject parent)
+    private PawnDataStruct CreatePawn(GameObject pawnPrefab, GameObject par)
     {
-        GameObject pawn = InstantiatePawn(pawnPrefab, spawnPoint.transform.position, parent);
+        GameObject pawn = InstantiatePawn(pawnPrefab, par);
+        pawn.transform.position = spawnPoint.transform.position;
         PawnDataStruct pawnData = pawn.GetComponent<PawnDataStruct>();
+        pawnData.PHS = this;
         SetPawnType(pawnPrefab, pawnData);
 
         return pawnData;
     }
 
-    private GameObject InstantiatePawn(GameObject pawnPrefab, Vector3 position, GameObject parent)
+    private GameObject InstantiatePawn(GameObject pawnPrefab, GameObject par)
     {
-        GameObject pawn = Instantiate(pawnPrefab, position, new Quaternion(0, 0, 0, 0));
-        pawn.transform.SetParent(parent.transform);
+        GameObject pawn = Instantiate(pawnPrefab, par.transform);
+        
+        //pawn.transform.SetParent(par.transform);
         return pawn;
     }
 
@@ -114,7 +118,7 @@ public class PawnHandlerScript : MonoBehaviour {
             return;
         }
         
-        Debug.Log("Show item named " + pawnData.name + ", item description " + pawnData.pawnDescription);
+        Debug.Log("Show item " + pawnData.name + " named " + pawnData.pawnName + ", item description: " + pawnData.pawnDescription);
 
         PIHS.OpenPawnInfo(pawnData);
     }
@@ -130,6 +134,7 @@ public class PawnHandlerScript : MonoBehaviour {
     {
         GameObject go = MakeAGameObject(safetyNetEntryData);
         PawnDataStruct pawnData = CopyPawnDataFromStorage(safetyNetEntryData, go);
+        pawnData.PHS = this;
 
         return pawnData;
     }
@@ -150,8 +155,8 @@ public class PawnHandlerScript : MonoBehaviour {
     private GameObject MakeAGameObject(SafetyNetEntryData safetyNetEntryData)
     {
         GameObject prefab = SNAS.GetTypePrefab(safetyNetEntryData.entryType);
-        GameObject go = InstantiatePawn(prefab, safetyNetEntryData.entryPosition, SNAS.gameObject); 
-
+        GameObject go = InstantiatePawn(prefab, pawnParent);
+        go.transform.localPosition = safetyNetEntryData.entryPosition;
         return go;
     }
 
