@@ -11,8 +11,11 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
     public float pawnImportance;
     public Vector3 pawnPosition;
     public float distanceToOrigin;
+    public NameTextAnimationScript NTAS;
 
     private PawnHandlerScript PHS;
+    private bool clickedOnce = false;
+    public bool showingName = false;
 
     private void Start()
     {
@@ -43,10 +46,21 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
         return true;
     }
 
+    public void UpdateAll()
+    {
+        UpdateDistanceToOrigin();
+        UpdatePosition();
+    }
+
     public void UpdateDistanceToOrigin()
     {
         distanceToOrigin = Vector3.Distance(gameObject.transform.position, PHS.GetOrigin().transform.position);
     }
+
+    public void UpdatePosition()
+    {
+        pawnPosition = gameObject.transform.position;
+    } 
 
     public float GetDistanceToOrigin()
     {
@@ -55,12 +69,15 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
 
     public void Clicked()
     {
-        PHS.ShowPawnInformation(this.gameObject);
-    }
-
-    public void UpdatePosition(Vector3 newPosition)
-    {
-        pawnPosition = newPosition;
+        if (clickedOnce && !showingName)
+        {
+            showingName = true;
+            PHS.ShowPawnInformation(this.gameObject);
+        } else
+        {
+            clickedOnce = true;
+            StartCoroutine(ShowName());
+        }
     }
 
     public void Held()
@@ -68,5 +85,26 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
         DragListenerScript dls = GetComponent<DragListenerScript>();
         if (dls != null)
             dls.EnableDrag();
+    }
+
+    public void PawnInformationClosed()
+    {
+        showingName = false;
+    }
+
+    private IEnumerator ShowName()
+    {
+        clickedOnce = true;
+        NTAS.ChangeText(true, pawnName);
+
+        float deltaTime = 0;
+        while (deltaTime < 1.5f)
+        {
+            deltaTime += Time.deltaTime;
+            yield return null;
+        }
+
+        NTAS.ChangeText(false, null);
+        clickedOnce = false;
     }
 }

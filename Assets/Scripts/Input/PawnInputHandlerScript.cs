@@ -15,6 +15,7 @@ public class PawnInputHandlerScript : MonoBehaviour {
     public Text infoText;
 
     private SafetyNetAdminScript SNAS;
+    public PawnDataStruct examinedPawn;
 
     private void Start()
     {
@@ -23,8 +24,9 @@ public class PawnInputHandlerScript : MonoBehaviour {
 
     public void OpenPawnInfo(PawnDataStruct pawnData)
     {
-        ToggleForm(false);
+        ToggleForm(false, false);
         CopyDataFromStruct(pawnData);
+        examinedPawn = pawnData;
     }
 
     private void CopyDataFromStruct(PawnDataStruct pawnData)
@@ -37,14 +39,19 @@ public class PawnInputHandlerScript : MonoBehaviour {
 
     public void OpenPawnCreationForm()
     {
-        ToggleForm(true);
+        ToggleForm(false, true);
     }
 
-    private void ToggleForm(bool openingForPawnCreation)
+    private void ToggleForm(bool closing, bool openingForPawnCreation)
     {
         ResetInputFields();
         deleteButton.interactable = !openingForPawnCreation;
         infoWindow.SetActive(!infoWindow.activeSelf);
+
+        if (closing && examinedPawn != null)
+        {
+            examinedPawn.PawnInformationClosed();
+        }
     }
 
     public void UpdatePawn()
@@ -64,7 +71,8 @@ public class PawnInputHandlerScript : MonoBehaviour {
 
     public void CloseForm()
     {
-        ToggleForm(false);
+        ToggleForm(true, false);
+        examinedPawn = null;
     }
 
     public void ResetInputFields()

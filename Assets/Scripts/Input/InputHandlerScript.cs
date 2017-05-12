@@ -11,6 +11,7 @@ public class InputHandlerScript : MonoBehaviour {
     public GameObject[] popups;
 
     private GameObject lastItemPointed = null;
+    private Vector3 pointHit;
     private float t = 0;
     private float timer = 0;
 
@@ -89,6 +90,7 @@ public class InputHandlerScript : MonoBehaviour {
 
         if (Physics.Raycast(ray, out hit, 100.0f) && hit.transform.gameObject)
         {
+            pointHit = new Vector3(hit.point.x, hit.point.y, hit.point.z);
             lastItemPointed = hit.transform.gameObject;
             Debug.Log("Last item hit: " + lastItemPointed.name);
         }
@@ -112,5 +114,10 @@ public class InputHandlerScript : MonoBehaviour {
             }
             yield return null;
         }
+    }
+
+    public Vector3 GetPointHit()
+    {
+        return pointHit;
     }
 }

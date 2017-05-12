@@ -23,8 +23,7 @@ public class DragListenerScript : MonoBehaviour {
 
     void OnMouseUp()
     {
-        pawnData.pawnPosition = this.gameObject.transform.position;
-        pawnData.UpdateDistanceToOrigin();
+        pawnData.UpdateAll();
         dragging = false;
     }
 

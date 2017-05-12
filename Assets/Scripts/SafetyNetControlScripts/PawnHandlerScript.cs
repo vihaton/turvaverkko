@@ -16,7 +16,7 @@ public class PawnHandlerScript : MonoBehaviour {
     private PawnInputHandlerScript PIHS;
     private SafetyNetAdminScript SNAS;
     private GameObject pawnPrefabPlaceholder;
-    private GameObject lastExaminedPawn;
+    public GameObject lastExaminedPawn;
     public bool examining;
 
     private void Awake()
@@ -50,6 +50,7 @@ public class PawnHandlerScript : MonoBehaviour {
             pawnData = CreatePawn(pawnPrefab, parent);
         }
 
+        pawnData.UpdatePosition();
         UpdateToRuntimeData(pawnData);
         pawnData.pawnName = name;
         pawnData.pawnDescription = description;
@@ -163,6 +164,11 @@ public class PawnHandlerScript : MonoBehaviour {
     public GameObject GetOrigin()
     {
         return origin;
+    }
+
+    public void SetSpawnPosition(Vector3 newPosition)
+    {
+        spawnPoint.transform.position = new Vector3(newPosition.x, 1.5f, newPosition.z);
     }
 
     internal List<PawnDataStruct> GetRuntimeData()

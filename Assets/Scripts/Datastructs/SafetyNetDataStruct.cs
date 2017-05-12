@@ -18,11 +18,6 @@ public class SafetyNetDataStruct : MonoBehaviour {
         SNAS = GetComponentInParent<SafetyNetAdminScript>();
     }
 
-    public void Held()
-    {
-        Debug.Log("Held on safety net!");
-    }
-
     internal void SetId(int id)
     {
         this.id = id;

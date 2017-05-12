@@ -24,6 +24,11 @@ public class SafetyNetAdminScript : MonoBehaviour {
         FindAndSortPrefabs();
     }
 
+    internal void SetSpawnPoint(Vector3 position)
+    {
+        currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().SetSpawnPosition(position);
+    }
+
     private void FindAndSortPrefabs()
     {
         GameObject[] prefabs = Resources.LoadAll<GameObject>("Pawns/");
