@@ -24,6 +24,16 @@ public class SafetyNetAdminScript : MonoBehaviour {
         FindAndSortPrefabs();
     }
 
+    internal int GetSafetyNetID(GameObject net)
+    {
+        return net.GetComponent<SafetyNetDataStruct>().id;
+    }
+
+    internal int GetSafetyNetID()
+    {
+        return GetSafetyNetID(currentSafetyNet);
+    }
+
     internal void SetSpawnPoint(Vector3 position)
     {
         currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().SetSpawnPosition(position);

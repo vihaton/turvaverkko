@@ -13,6 +13,7 @@ public class LookPointMoveScript : MonoBehaviour {
     private GameObject previousLookPoint;
     private GameObject previousGoal;
     private Coroutine moveAndRotate;
+    private bool positionLocked;
 
     private void Start()
     {
@@ -28,6 +29,11 @@ public class LookPointMoveScript : MonoBehaviour {
         }
 
         previousLookPoint = lookPoint;
+    }
+    
+    public void LockPosition(bool b)
+    {
+        positionLocked = b;
     }
 
     public void MoveLookPoint(Vector3 movementVector)
@@ -62,9 +68,12 @@ public class LookPointMoveScript : MonoBehaviour {
 
     internal void PanStopped()
     {
-        GameObject closestSafetyNet = SNAS.GetClosestSafetyNet(transform.position);
-        SNAS.ChangeSafetyNet(closestSafetyNet);
-        MoveTo(closestSafetyNet, 0.00001f);
+        if (!positionLocked)
+        {
+            GameObject closestSafetyNet = SNAS.GetClosestSafetyNet(transform.position);
+            SNAS.ChangeSafetyNet(closestSafetyNet);
+            MoveTo(closestSafetyNet, 0.00001f);
+        }
     }
 
     IEnumerator MoveAndRotate(Vector3 startPos, Vector3 endPos, Quaternion startRot, Quaternion endRot, GameObject goal, float overriddenLerpTime)

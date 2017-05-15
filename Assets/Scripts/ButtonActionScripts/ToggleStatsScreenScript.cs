@@ -8,23 +8,38 @@ public class ToggleStatsScreenScript : MonoBehaviour {
     public bool inStatsScreen = false;
     
     private LookPointMoveScript LPMS;
+    private StatsPopupControlScript SPCS;
 
     private void Start()
     {
         LPMS = FindObjectOfType<LookPointMoveScript>();
+        SPCS = FindObjectOfType<StatsPopupControlScript>();
     }
 
     public void StatsScreenToggle()
     {
         if (!inStatsScreen)
         {
-            LPMS.MoveTo(StatsScreenLookPoint);
+            SetupStatsScreen(true);
         }
         else
         {
-            LPMS.MoveBackToPreviousPoint();
+            SetupStatsScreen(false);
         }
         
         inStatsScreen = !inStatsScreen;
+    }
+
+    private void SetupStatsScreen(bool b)
+    {
+        if (b)
+        {
+            LPMS.MoveTo(StatsScreenLookPoint);
+        } else
+        {
+            LPMS.MoveBackToPreviousPoint();
+        }
+        LPMS.LockPosition(b);
+        SPCS.ShowStats(b);
     }
 }
