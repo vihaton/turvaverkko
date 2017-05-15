@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StatsPopupControlScript : MonoBehaviour {
 
@@ -9,23 +10,25 @@ public class StatsPopupControlScript : MonoBehaviour {
     public GameObject content;
     public GameObject statsItemPrefab;
 
-    public List<GameObject> currentItems;
+    private List<GameObject> currentItems;
     private SafetyNetAdminScript SNAS;
     private int previousSafetyNet = int.MinValue;
     private float statsItemHeight;
+    private ToggleStatsScreenScript toggleStatsScript;
+    private PawnInputHandlerScript PIHS;
 
     private void Start()
     {
         SNAS = FindObjectOfType<SafetyNetAdminScript>();
         currentItems = new List<GameObject>();
-        statsItemHeight = statsItemPrefab.GetComponent<RectTransform>().rect.height;
-        Debug.Log("height" + statsItemHeight);
+        statsItemHeight = statsItemPrefab.GetComponent<LayoutElement>().minHeight;
+        toggleStatsScript = FindObjectOfType<ToggleStatsScreenScript>();
+        PIHS = FindObjectOfType<PawnInputHandlerScript>();
     }
 
     public void ShowStats(bool isShowed)
     {
         int safetyNetID = SNAS.GetSafetyNetID();
-        Debug.Log("previousSafetyNet: " + previousSafetyNet);
         if (isShowed && previousSafetyNet != safetyNetID)
         {
             ClearDataAndObjects();
@@ -68,8 +71,8 @@ public class StatsPopupControlScript : MonoBehaviour {
 
     private GameObject MakeStatsItem(PawnDataStruct pds)
     {
-        Debug.Log("Makestatsitem called");
         GameObject go = Instantiate(statsItemPrefab, content.transform);
+        go.GetComponent<StatsItemDataStruct>().Initialize(pds, toggleStatsScript, PIHS);
         return go;
     }
 
