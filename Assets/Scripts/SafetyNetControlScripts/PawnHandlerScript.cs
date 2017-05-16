@@ -39,16 +39,23 @@ public class PawnHandlerScript : MonoBehaviour {
         }
     }
 
-    public void UpdatePawn(string name, string description, float importance, GameObject pawnPrefab)
+    public void UpdatePawn(string name, string description, float importance, int type, GameObject pawnPrefab)
     {
         PawnDataStruct pawnData = null;
 
         if (examining)
         {
             pawnData = lastExaminedPawn.GetComponent<PawnDataStruct>();
-        } else
+            if (pawnData.pawnType != type)
+            {
+                Vector3 pos = pawnData.pawnPosition;
+                DeletePawn();
+                pawnData = CreatePawn(pawnPrefab, pawnParent, pos);
+            }
+        }
+        else
         {
-            pawnData = CreatePawn(pawnPrefab, pawnParent);
+            pawnData = CreatePawn(pawnPrefab, pawnParent, Vector3.zero);
         }
 
         pawnData.UpdateAll();
@@ -59,13 +66,20 @@ public class PawnHandlerScript : MonoBehaviour {
         examining = false;
     }
 
-    private PawnDataStruct CreatePawn(GameObject pawnPrefab, GameObject par)
+    private PawnDataStruct CreatePawn(GameObject pawnPrefab, GameObject par, Vector3 position)
     {
         GameObject pawn = InstantiatePawn(pawnPrefab, par);
-        pawn.transform.position = spawnPoint.transform.position;
         PawnDataStruct pawnData = pawn.GetComponent<PawnDataStruct>();
         pawnData.PHS = this;
         SetPawnType(pawnPrefab, pawnData);
+
+        if (position == Vector3.zero)
+        {
+            pawn.transform.position = spawnPoint.transform.position;
+        } else
+        {
+            pawn.transform.localPosition = position;
+        }
 
         return pawnData;
     }

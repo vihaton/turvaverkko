@@ -203,7 +203,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
     public bool UpdatePawn(string name, string description, float importance, int type)
     {
         SetupPrefabForInstantiation(type);
-        currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().UpdatePawn(name, description, importance, pawnPrefabPlaceholder);
+        currentSafetyNet.GetComponentInChildren<PawnHandlerScript>().UpdatePawn(name, description, importance, type, pawnPrefabPlaceholder);
         return true;
     }
 

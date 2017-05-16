@@ -61,10 +61,10 @@ public class PawnInputHandlerScript : MonoBehaviour {
             infoText.text = "Valitse ensin tyyppi painamalla Tyyppi -nappulaa";
             return;
         }
-        deleteButton.interactable = true;
         bool done = SNAS.UpdatePawn(nameInput.text, descriptionInput.text, slider.value, typeSwitcher.GetCurrentType());
         if (done)
         {
+            ToggleForm(true, false);
             infoWindow.SetActive(false);
         }
     }

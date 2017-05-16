@@ -22,4 +22,9 @@ public class GameControllerScript : MonoBehaviour {
         if (saveProgress)
             SDCS.Save();
     }
+
+    public void Quit()
+    {
+        Application.Quit();
+    }
 }
