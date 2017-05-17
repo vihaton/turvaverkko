@@ -122,7 +122,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
         GameObject defaultNet = null;
         SafetyNetData[] safetyNets = SDCS.LoadEntryDataFromStorage();
         if (safetyNets == null || safetyNets.Length < 1)
-            return;
+            UpdateSafetyNet("Turvaverkkoni", "Lisää kuvaus");
 
         foreach (SafetyNetData net in safetyNets)
         {
