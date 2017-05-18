@@ -23,6 +23,12 @@ public class GameControllerScript : MonoBehaviour {
             SDCS.Save();
     }
 
+    public void DestroyAllProgress()
+    {
+        SNAS.DestroyAllProgress();
+        SNAS.UpdateSafetyNet("Turvaverkkoni", "Lisää kuvaus");
+    }
+
     public void Quit()
     {
         Application.Quit();

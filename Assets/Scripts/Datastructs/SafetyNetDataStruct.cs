@@ -8,8 +8,8 @@ public class SafetyNetDataStruct : MonoBehaviour {
     public int id;
     public string safetyNetName;
     public string safetyNetDescription;
+    public PawnHandlerScript PHS;
 
-    private PawnHandlerScript PHS;
     private SafetyNetAdminScript SNAS;
 
     private void Awake()

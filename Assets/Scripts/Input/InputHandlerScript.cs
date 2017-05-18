@@ -6,12 +6,14 @@ using UnityEngine;
 public class InputHandlerScript : MonoBehaviour {
 
     public float holdingTime;
+    public float coolDown;
     public bool currentlyHandlingInput = false;
     public bool incomingInput = false;
     public GameObject[] popups;
 
     private GameObject lastItemPointed = null;
     private Vector3 pointHit;
+    private bool notOnCooldown = true;
     private float t = 0;
     private float timer = 0;
 
@@ -23,7 +25,7 @@ public class InputHandlerScript : MonoBehaviour {
     void Update()
     {
         
-        if (Input.GetMouseButtonDown(0) && NoPopupsActive())
+        if (Input.GetMouseButtonDown(0) && notOnCooldown && NoPopupsActive())
         {
             t = Time.time;
             currentlyHandlingInput = true;
@@ -66,6 +68,8 @@ public class InputHandlerScript : MonoBehaviour {
                 TryToInteract(false);
         }
         t = 0;
+
+        StartCoroutine(CooldownTimer());
     }
 
     private void TryToInteract(bool isHold)
@@ -114,6 +118,20 @@ public class InputHandlerScript : MonoBehaviour {
             }
             yield return null;
         }
+    }
+
+    private IEnumerator CooldownTimer()
+    {
+        notOnCooldown = false;
+        float deltaTime = 0;
+
+        while (deltaTime < coolDown)
+        {
+            deltaTime += Time.deltaTime;
+            yield return null;
+        }
+
+        notOnCooldown = true;
     }
 
     public Vector3 GetPointHit()

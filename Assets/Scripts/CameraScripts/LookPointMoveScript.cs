@@ -70,9 +70,9 @@ public class LookPointMoveScript : MonoBehaviour {
     {
         if (!positionLocked)
         {
-            GameObject closestSafetyNet = SNAS.GetClosestSafetyNet(transform.position);
+            SafetyNetDataStruct closestSafetyNet = SNAS.GetClosestSafetyNet(transform.position);
             SNAS.ChangeSafetyNet(closestSafetyNet);
-            MoveTo(closestSafetyNet, 0.00001f);
+            MoveTo(closestSafetyNet.gameObject, 0.00001f);
         }
     }
 

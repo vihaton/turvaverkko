@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class SafetyNetAdminScript : MonoBehaviour {
 
-    public GameObject currentSafetyNet;
+    public SafetyNetDataStruct currentSafetyNet;
     public GameObject safetyNetPrefab;
     public float waitForTransition;
     public GameObject[] typePrefabs;
@@ -24,9 +24,9 @@ public class SafetyNetAdminScript : MonoBehaviour {
         FindAndSortPrefabs();
     }
 
-    internal int GetSafetyNetID(GameObject net)
+    internal int GetSafetyNetID(SafetyNetDataStruct net)
     {
-        return net.GetComponent<SafetyNetDataStruct>().id;
+        return net.id;
     }
 
     internal int GetSafetyNetID()
@@ -55,7 +55,7 @@ public class SafetyNetAdminScript : MonoBehaviour {
     {
         GameObject newSafetyNet = MakeASafetyNet();
         SafetyNetDataStruct snds = InitializeSafetyNetData(newSafetyNet);
-        currentSafetyNet = newSafetyNet;
+        currentSafetyNet = snds;
         
         StartCoroutine(WaitAndMoveTo(newSafetyNet));
         return snds;
@@ -64,8 +64,8 @@ public class SafetyNetAdminScript : MonoBehaviour {
     public void DeleteSafetyNet()
     {
         Vector3 currentPosition = currentSafetyNet.transform.position;
-        SafetyNetDataStruct snds = currentSafetyNet.GetComponent<SafetyNetDataStruct>();
-        Destroy(currentSafetyNet);
+        SafetyNetDataStruct snds = currentSafetyNet;
+        Destroy(currentSafetyNet.gameObject);
         runtimeData.Remove(snds);
 
         MoveToClosestSafetyNet(currentPosition);
@@ -73,9 +73,13 @@ public class SafetyNetAdminScript : MonoBehaviour {
 
     private void MoveToClosestSafetyNet(Vector3 currentPosition)
     {
-        GameObject closest = GetClosestSafetyNet(currentPosition);
-        ChangeSafetyNet(closest);
-        LPMS.MoveTo(closest);
+        SafetyNetDataStruct closest = GetClosestSafetyNet(currentPosition);
+
+        if (closest != null)
+        {
+            ChangeSafetyNet(closest);
+            LPMS.MoveTo(closest.gameObject);
+        }
     }
 
     internal bool UpdateSafetyNet(string newName, string newDescription)
@@ -94,13 +98,15 @@ public class SafetyNetAdminScript : MonoBehaviour {
         return true;
     }
 
-    internal void ChangeSafetyNet(GameObject newSafetyNet)
+    internal void ChangeSafetyNet(SafetyNetDataStruct newSafetyNet)
     {
         currentSafetyNet = newSafetyNet;
     }
 
-    internal GameObject GetClosestSafetyNet(Vector3 position)
+    internal SafetyNetDataStruct GetClosestSafetyNet(Vector3 position)
     {
+        if (runtimeData.Count == 0)
+            return null;
         SafetyNetDataStruct closest = runtimeData[0];
         float minDistance = float.MaxValue;
 
@@ -114,12 +120,12 @@ public class SafetyNetAdminScript : MonoBehaviour {
             }
         }
 
-        return closest.gameObject;
+        return closest;
     }
 
     public void CreatePawnsFromStorage()
     {
-        GameObject defaultNet = null;
+        SafetyNetDataStruct defaultNet = null;
         SafetyNetData[] safetyNets = SDCS.LoadEntryDataFromStorage();
         if (safetyNets == null || safetyNets.Length < 1)
             UpdateSafetyNet("Turvaverkkoni", "Lisää kuvaus");
@@ -131,10 +137,10 @@ public class SafetyNetAdminScript : MonoBehaviour {
             SNDS.CreatePawnsFromStorage(net.SafetyNetArray);
 
             if (net.id == 0)
-                defaultNet = netGameObject;
+                defaultNet = SNDS;
         }
         currentSafetyNet = defaultNet;
-        StartCoroutine(WaitAndMoveTo(defaultNet));
+        StartCoroutine(WaitAndMoveTo(defaultNet.gameObject));
     }
 
     private SafetyNetDataStruct InitializeSafetyNetData(SafetyNetData net, GameObject netGameObject)
@@ -232,7 +238,22 @@ public class SafetyNetAdminScript : MonoBehaviour {
 
     internal void DestroyAllProgress()
     {
+        foreach (SafetyNetDataStruct snds in runtimeData)
+        {
+            snds.PHS.DestroyAllProgress();
+        }
+
+        DeleteAllSafetyNets();
         runtimeData.Clear();
+    }
+
+    private void DeleteAllSafetyNets()
+    {
+        int times = runtimeData.Count;
+        for (int i = 0; i < times; i++)
+        {
+            DeleteSafetyNet();
+        }
     }
 
     public void DeletePawn()

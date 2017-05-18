@@ -197,6 +197,11 @@ public class PawnHandlerScript : MonoBehaviour {
 
     internal void DestroyAllProgress()
     {
+        foreach (PawnDataStruct pds in runtimeData)
+        {
+            Destroy(pds.gameObject);
+        }
+
         runtimeData.Clear();
     }
 }
