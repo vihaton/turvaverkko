@@ -26,7 +26,7 @@ public class GameControllerScript : MonoBehaviour {
     public void DestroyAllProgress()
     {
         SNAS.DestroyAllProgress();
-        SNAS.UpdateSafetyNet("Turvaverkkoni", "Lisää kuvaus");
+        SNAS.UpdateSafetyNet("Minä", "");
     }
 
     public void Quit()

@@ -9,6 +9,7 @@ public class SafetyNetInputScript : MonoBehaviour, ClickableInterface {
     private SafetyNetInputHandlerScript safetyNetInput;
     private SafetyNetAdminScript SNAS;
     private InputHandlerScript input;
+    private bool onlyHeld = false;
 
     void Start () {
         SNAS = FindObjectOfType<SafetyNetAdminScript>();
@@ -26,6 +27,11 @@ public class SafetyNetInputScript : MonoBehaviour, ClickableInterface {
     public void Held()
     {
         safetyNetInput.OpenSafetyInfo(GetComponentInParent<SafetyNetDataStruct>());
+    }
+
+    public bool isOnlyHeld()
+    {
+        return onlyHeld;
     }
 
 }

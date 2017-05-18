@@ -4,6 +4,8 @@ using UnityEngine;
 
 public interface ClickableInterface {
 
+    bool isOnlyHeld();
+
     void Clicked();
 
     void Held();

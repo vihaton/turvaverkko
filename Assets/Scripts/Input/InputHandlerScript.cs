@@ -11,7 +11,7 @@ public class InputHandlerScript : MonoBehaviour {
     public bool incomingInput = false;
     public GameObject[] popups;
 
-    private GameObject lastItemPointed = null;
+    private ClickableInterface lastItemPointed = null;
     private Vector3 pointHit;
     private bool notOnCooldown = true;
     private float t = 0;
@@ -74,15 +74,15 @@ public class InputHandlerScript : MonoBehaviour {
 
     private void TryToInteract(bool isHold)
     {
-        ClickableInterface clickable = lastItemPointed.GetComponent<ClickableInterface>();
-        if (clickable == null)
+        //ClickableInterface clickable = lastItemPointed.GetComponent<ClickableInterface>();
+        if (lastItemPointed == null)
             return;
         if (isHold)
         {
-            clickable.Held();
+            lastItemPointed.Held();
         } else
         {
-            clickable.Clicked();
+            lastItemPointed.Clicked();
         }
     }
 
@@ -95,8 +95,11 @@ public class InputHandlerScript : MonoBehaviour {
         if (Physics.Raycast(ray, out hit, 100.0f) && hit.transform.gameObject)
         {
             pointHit = new Vector3(hit.point.x, hit.point.y, hit.point.z);
-            lastItemPointed = hit.transform.gameObject;
-            Debug.Log("Last item hit: " + lastItemPointed.name);
+            ClickableInterface clickHandler = hit.transform.gameObject.GetComponent<ClickableInterface>();
+            if (clickHandler != null)
+                lastItemPointed = clickHandler;
+            if (Debug.isDebugBuild)
+                Debug.Log("Last item hit: " + hit.transform.gameObject.name);
         }
     }
 
@@ -106,7 +109,7 @@ public class InputHandlerScript : MonoBehaviour {
         {
             if (currentlyHandlingInput)
             {
-                if (lastItemPointed.tag.Equals("WorldPlane") || timer > holdingTime || Input.GetMouseButtonUp(0))
+                if (lastItemPointed.isOnlyHeld() || Input.GetMouseButtonUp(0) || timer > holdingTime)
                 {
                     incomingInput = true;
                     currentlyHandlingInput = false;

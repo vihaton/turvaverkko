@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class StatsPopupControlScript : MonoBehaviour {
 
     public GameObject stats;
+    public GameObject graphButton;
     public GameObject content;
     public GameObject statsItemPrefab;
 
@@ -36,6 +37,7 @@ public class StatsPopupControlScript : MonoBehaviour {
         }
 
         stats.SetActive(isShowed);
+        graphButton.SetActive(isShowed);
     }
 
     private void MakeSafetyNetObjects(int safetyNetID)

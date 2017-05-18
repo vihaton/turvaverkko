@@ -10,6 +10,7 @@ public class WorldPlaneInputScript : MonoBehaviour, ClickableInterface {
     private InputHandlerScript inputHandler;
     private bool panning;
     private Vector3 dragOrigin;
+    private bool onlyHeld = true;
 
     private void Start()
     {
@@ -31,6 +32,11 @@ public class WorldPlaneInputScript : MonoBehaviour, ClickableInterface {
     public void Held()
     {
         //Not implemented
+    }
+
+    public bool isOnlyHeld()
+    {
+        return onlyHeld;
     }
 
 	void LateUpdate ()

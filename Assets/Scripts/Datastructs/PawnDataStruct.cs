@@ -16,6 +16,7 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
 
     public PawnHandlerScript PHS;
     private bool clickedOnce = false;
+    private bool onlyHeld = false;
 
     public override int GetHashCode()
     {
@@ -55,6 +56,11 @@ public class PawnDataStruct : MonoBehaviour, ClickableInterface {
     public float GetDistanceToOrigin()
     {
         return distanceToOrigin;
+    }
+
+    public bool isOnlyHeld()
+    {
+        return onlyHeld;
     }
 
     public void Clicked()
