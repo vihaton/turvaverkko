@@ -23,7 +23,7 @@ public class XYStatsControlScript : MonoBehaviour {
         {
             pds.UpdateDistanceToOrigin();
             WMG_Series series = seriesList[pds.pawnType];
-            series.pointValues.Add(new Vector2(pds.pawnImportance, pds.distanceToOrigin));
+            series.pointValues.Add(new Vector2(pds.distanceToOrigin, pds.pawnImportance));
         }
     }
 

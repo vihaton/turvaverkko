@@ -34,10 +34,13 @@ public class StatsItemDataStruct : MonoBehaviour {
 
     private void CopyInformation()
     {
+        PDS.UpdateAll();
         nameLabel.text = PDS.pawnName;
-        closenessSlider.value = PDS.distanceToOrigin;
+        closenessSlider.value = -PDS.distanceToOrigin;
         frequencySlider.value = PDS.pawnImportance;
         image.color = colors[PDS.pawnType];
+
+        Debug.Log("PDS: " + PDS.pawnName + ", distance to origin: " + PDS.distanceToOrigin);
     }
 
     private Dictionary<int, Color> GetColors()

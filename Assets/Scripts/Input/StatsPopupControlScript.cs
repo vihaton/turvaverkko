@@ -11,7 +11,7 @@ public class StatsPopupControlScript : MonoBehaviour {
     public GameObject content;
     public GameObject statsItemPrefab;
 
-    private List<GameObject> currentItems;
+    private List<StatsItemDataStruct> currentObjects;
     private SafetyNetAdminScript SNAS;
     private int previousSafetyNet = int.MinValue;
     private float statsItemHeight;
@@ -21,23 +21,23 @@ public class StatsPopupControlScript : MonoBehaviour {
     private void Start()
     {
         SNAS = FindObjectOfType<SafetyNetAdminScript>();
-        currentItems = new List<GameObject>();
+        currentObjects = new List<StatsItemDataStruct>();
         statsItemHeight = statsItemPrefab.GetComponent<LayoutElement>().minHeight;
         toggleStatsScript = FindObjectOfType<ToggleStatsScreenScript>();
         PIHS = FindObjectOfType<PawnInputHandlerScript>();
     }
 
-    public void ShowStats(bool isShowed)
+    public void ShowStats(bool openingStats)
     {
+        stats.SetActive(openingStats);
+        graphButton.SetActive(openingStats);
+
         int safetyNetID = SNAS.GetSafetyNetID();
-        if (isShowed && previousSafetyNet != safetyNetID)
+        if (openingStats)
         {
             ClearDataAndObjects();
             MakeSafetyNetObjects(safetyNetID);
         }
-
-        stats.SetActive(isShowed);
-        graphButton.SetActive(isShowed);
     }
 
     private void MakeSafetyNetObjects(int safetyNetID)
@@ -45,37 +45,38 @@ public class StatsPopupControlScript : MonoBehaviour {
         previousSafetyNet = safetyNetID;
         List<PawnDataStruct> data = SNAS.GetCurrentSafetyNetRuntimeData();
         ScaleContent(data.Count);
-        BuildObjects(data);
+        AddItems(data);
     }
 
-    private void BuildObjects(List<PawnDataStruct> data)
+    private void AddItems(List<PawnDataStruct> data)
     {
         foreach (PawnDataStruct pds in data)
         {
             Debug.Log("pds: " + pds + ", name: " + pds.pawnName);
-            currentItems.Add(MakeStatsItem(pds));
+            currentObjects.Add(BuildObjects(pds));
         }
     }
 
     private void ClearDataAndObjects()
     {
-        currentItems.Clear();
-        DestroyAll(currentItems);
+        DestroyAll(currentObjects);
+        currentObjects.Clear();
     }
 
-    private void DestroyAll(List<GameObject> currentItems)
+    private void DestroyAll(List<StatsItemDataStruct> objects)
     {
-        foreach (GameObject go in currentItems)
+        foreach (StatsItemDataStruct sids in objects)
         {
-            Destroy(go);
+            Destroy(sids.gameObject);
         }
     }
 
-    private GameObject MakeStatsItem(PawnDataStruct pds)
+    private StatsItemDataStruct BuildObjects(PawnDataStruct pds)
     {
         GameObject go = Instantiate(statsItemPrefab, content.transform);
-        go.GetComponent<StatsItemDataStruct>().Initialize(pds, toggleStatsScript, PIHS);
-        return go;
+        StatsItemDataStruct sids = go.GetComponent<StatsItemDataStruct>();
+        sids.Initialize(pds, toggleStatsScript, PIHS);
+        return sids;
     }
 
     private void ScaleContent(int count)
