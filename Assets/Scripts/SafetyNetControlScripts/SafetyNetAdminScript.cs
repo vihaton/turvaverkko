@@ -77,9 +77,14 @@ public class SafetyNetAdminScript : MonoBehaviour {
 
         if (closest != null)
         {
-            ChangeSafetyNet(closest);
-            LPMS.MoveTo(closest.gameObject);
+            ChangeToSafetyNet(closest);
         }
+    }
+
+    private void ChangeToSafetyNet(SafetyNetDataStruct newSafetyNet)
+    {
+        ChangeCurrentSafetyNet(newSafetyNet);
+        LPMS.MoveTo(newSafetyNet.gameObject);
     }
 
     internal bool UpdateSafetyNet(string newName, string newDescription)
@@ -98,7 +103,27 @@ public class SafetyNetAdminScript : MonoBehaviour {
         return true;
     }
 
-    internal void ChangeSafetyNet(SafetyNetDataStruct newSafetyNet)
+    public void Move(bool toLeft)
+    {
+        //int i = runtimeData.IndexOf(currentSafetyNet);
+
+        try
+        {
+            if (toLeft)
+            {
+                ChangeToSafetyNet(runtimeData[currentSafetyNet.id - 1]);
+            }
+            else
+            {
+                ChangeToSafetyNet(runtimeData[currentSafetyNet.id + 1]);
+            }
+        } catch (Exception e)
+        {
+            //No need to do anything
+        }
+    }
+
+    internal void ChangeCurrentSafetyNet(SafetyNetDataStruct newSafetyNet)
     {
         currentSafetyNet = newSafetyNet;
     }

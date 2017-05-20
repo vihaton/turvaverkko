@@ -9,17 +9,32 @@ public class InputHandlerScript : MonoBehaviour {
     public float coolDown;
     public bool currentlyHandlingInput = false;
     public bool incomingInput = false;
-    public GameObject[] popups;
+    public GameObject screenPopups;
+    public List<GameObject> popups;
 
     private ClickableInterface lastItemPointed = null;
     private Vector3 pointHit;
-    private bool notOnCooldown = true;
+    public bool notOnCooldown = true;
     private float t = 0;
     private float timer = 0;
 
     private void Start()
     {
+        popups = new List<GameObject>();
+        GetScenePopups();
         StartCoroutine(HoldTimer());
+    }
+
+    private void GetScenePopups()
+    {
+        for (int i = 0; i < screenPopups.transform.childCount; i++)
+        {
+            Transform child = screenPopups.transform.GetChild(i);
+            if (child.parent.name.Equals(screenPopups.name))
+            {
+                popups.Add(child.gameObject);
+            }
+        }
     }
 
     void Update()
@@ -63,10 +78,9 @@ public class InputHandlerScript : MonoBehaviour {
         }
         else if (delta < holdingTime)
         {
-            //Debug.Log("Last item clicked, " + lastItem);
-            if (lastItemPointed != null)
-                TryToInteract(false);
+            TryToInteract(false);
         }
+
         t = 0;
 
         StartCoroutine(CooldownTimer());
@@ -135,6 +149,11 @@ public class InputHandlerScript : MonoBehaviour {
         }
 
         notOnCooldown = true;
+    }
+
+    public void ButtonPressed()
+    {
+        StartCoroutine(CooldownTimer());
     }
 
     public Vector3 GetPointHit()

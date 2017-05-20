@@ -71,7 +71,7 @@ public class LookPointMoveScript : MonoBehaviour {
         if (!positionLocked)
         {
             SafetyNetDataStruct closestSafetyNet = SNAS.GetClosestSafetyNet(transform.position);
-            SNAS.ChangeSafetyNet(closestSafetyNet);
+            SNAS.ChangeCurrentSafetyNet(closestSafetyNet);
             MoveTo(closestSafetyNet.gameObject, 0.00001f);
         }
     }

@@ -17,13 +17,21 @@ public class GameControllerScript : MonoBehaviour {
         SNAS.CreatePawnsFromStorage();
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Quit();
+        }
+    }
+
     private void OnApplicationQuit()
     {
         if (saveProgress)
             SDCS.Save();
     }
 
-    public void DestroyAllProgress()
+    public void DestroyAndInit()
     {
         SNAS.DestroyAllProgress();
         SNAS.UpdateSafetyNet("Minä", "");
@@ -31,6 +39,8 @@ public class GameControllerScript : MonoBehaviour {
 
     public void Quit()
     {
+        if (saveProgress)
+            SDCS.Save();
         Application.Quit();
     }
 }
