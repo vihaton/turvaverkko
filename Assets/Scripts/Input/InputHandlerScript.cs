@@ -74,7 +74,6 @@ public class InputHandlerScript : MonoBehaviour {
 
     private void TryToInteract(bool isHold)
     {
-        //ClickableInterface clickable = lastItemPointed.GetComponent<ClickableInterface>();
         if (lastItemPointed == null)
             return;
         if (isHold)
@@ -98,6 +97,7 @@ public class InputHandlerScript : MonoBehaviour {
             ClickableInterface clickHandler = hit.transform.gameObject.GetComponent<ClickableInterface>();
             if (clickHandler != null)
                 lastItemPointed = clickHandler;
+
             if (Debug.isDebugBuild)
                 Debug.Log("Last item hit: " + hit.transform.gameObject.name);
         }
